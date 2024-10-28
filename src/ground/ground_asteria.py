@@ -4,6 +4,7 @@ import digitalio
 
 from base.loop import Loop
 from ground.command import CommandComponent
+from ground.ground_rfm95w import GroundRFM95WComponent
 
 
 class GroundAsteria:
