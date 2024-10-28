@@ -4,12 +4,9 @@ import microcontroller
 import pwmio
 
 from base.component import Component
+from base.constants import SERVO_FREQUENCY, SERVO_MINIMUM_PULSE_WIDTH, SERVO_MAXIMUM_PULSE_WIDTH
 from air.bno085 import BNO085State
 from air.rfm95w import AirRFM95WState
-
-SERVO_FREQUENCY = 50
-SERVO_MINIMUM_PULSE_WIDTH = 0.001
-SERVO_MAXIMUM_PULSE_WIDTH = 0.002
 
 
 @dataclass
