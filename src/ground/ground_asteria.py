@@ -3,6 +3,7 @@ import busio
 import digitalio
 
 from base.loop import Loop
+from ground.command import CommandComponent
 
 
 class GroundAsteria:
@@ -23,5 +24,5 @@ class GroundAsteria:
             spi, board.D5, board.D6, command_state)
         self._loop.add_component(ground_rfm95w_component, 1)
 
-    def run(self, int: steps):
+    def run(self, steps: int):
         self._loop.run(steps)

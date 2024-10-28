@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import socket
+from typing import Optional
 
 from base.component import Component
 
@@ -15,7 +16,7 @@ class CommandComponent(Component):
         self._state = CommandState()
 
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self._socket.bind("0.0.0.0", port)
+        self._socket.bind(("0.0.0.0", port))
         self._socket.setblocking(False)
 
     @property
@@ -25,7 +26,7 @@ class CommandComponent(Component):
     def dispatch(self):
         try:
             command, _ = self._socket.recvfrom(4096)
-        except TimeoutError:
+        except BlockingIOError:
             return
 
         command = int.from_bytes(command, byteorder="big")

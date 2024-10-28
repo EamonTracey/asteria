@@ -23,5 +23,5 @@ class AirAsteria:
         air_rfm95w_component = AirRFM95WComponent(spi, board.D5, board.D6)
         self._loop.add_component(air_rfm95w_component, 1)
 
-    def run(self, int: steps):
+    def run(self, steps: int):
         self._loop.run(steps)

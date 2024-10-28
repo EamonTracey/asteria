@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Optional
 
 import adafruit_rfm9x
 import busio
