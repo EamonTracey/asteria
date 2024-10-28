@@ -34,5 +34,5 @@ class AirRFM95WComponent(Component):
         if command is None:
             return
 
-        command = int.from_byets(command, byteorder="big")
+        command = int.from_bytes(command, byteorder="big")
         self._state.command = command
