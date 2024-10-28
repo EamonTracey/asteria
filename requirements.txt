@@ -1,4 +1,5 @@
 adafruit-circuitpython-bno08x
+adafruit-circuitpython-mcp9808
 adafruit-circuitpython-rfm9x
 click
 yapf

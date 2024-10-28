@@ -4,6 +4,8 @@ import digitalio
 
 from base.loop import Loop
 from air.bno085 import BNO085Component
+from air.mcp9808 import MCP9808Component
+from air.rfm95w import RFM95WComponent
 
 
 class AirAsteria:
@@ -17,7 +19,11 @@ class AirAsteria:
 
         # BNO085.
         bno085_component = BNO085Component(i2c)
-        self._loop.add_component(bno085_component, i2c, 1)
+        self._loop.add_component(bno085_component, 1)
+
+        # MCP9808.
+        mcp9808_component = MCP9808Component(i2c)
+        self._loop.add_component(mcp9808_component, 1)
 
         # Air RFM95W.
         air_rfm95w_component = AirRFM95WComponent(spi, board.D5, board.D6)
