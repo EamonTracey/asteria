@@ -1,3 +1,4 @@
-click
 adafruit-circuitpython-bno08x
 adafruit-circuitpython-rfm9x
+click
+yapf

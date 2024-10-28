@@ -4,7 +4,6 @@ import microcontroller
 import pwmio
 
 from base.component import Component
-from base.message import Message
 from air.bno085 import BNO085State
 from air.rfm95w import AirRFM95WState
 
@@ -37,14 +36,14 @@ class ControlComponent(Component):
     def dispatch(self):
         # TODO: Implement controller.
 
-        message = self._rfm95w_state.message
-        if message is None:
+        command = self._rfm95w_state.command
+        if command is None:
             return
 
-        if message == Message.ORIENTATION_ONE:
+        if command == 0:
             self._state.duty_cycle = int(SERVO_MINIMUM_PULSE_WIDTH *
                                          SERVO_FREQUENCY * 2**16)
-        elif message == Message.ORIENTATION_TWO:
+        elif command == 1:
             self._state.duty_cycle = int(SERVO_MAXIMUM_PULSE_WIDTH *
                                          SERVO_FREQUENCY * 2**16)
 

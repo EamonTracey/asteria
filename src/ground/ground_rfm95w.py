@@ -1,23 +1,27 @@
 from dataclasses import dataclass
+import math
 
 import adafruit_rfm9x
 import busio
 import digitalio
 import microcontroller
 
+from base.command import CommandState
 from base.component import Component
 
 
 @dataclass
-class AirRFM95WState:
-    command: Optional[int] = None
+class GroundRFM95WState:
+    messages: int = 0
 
 
-class AirRFM95WComponent(Component):
+class GroundRFM95WComponent(Component):
 
     def __init__(self, spi: busio.SPI, cs: microcontroller.Pin,
-                 rst: microcontroller.Pin):
-        self._state = AirRFM95WState()
+                 rst: microcontroller.Pin, command_state: CommandState):
+        self._state = GroundRFM95WState()
+
+        self._command_state = command_state
 
         cs = digitalio.DigitalInOut(cs)
         rst = digitalio.DigitalInOut(rst)
@@ -28,10 +32,11 @@ class AirRFM95WComponent(Component):
         return self._state
 
     def dispatch(self):
-        command = self._rfm95w.receive(timeout=0)
+        command = self._command_state.command
 
         if command is None:
             return
 
-        command = int.from_byets(command, byteorder="big")
-        self._state.command = command
+        command = command.to_bytes(math.ceil(command.bit_length()),
+                                   byteorder="big")
+        self._rfm95w.send(command)

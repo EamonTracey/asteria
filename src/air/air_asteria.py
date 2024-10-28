@@ -17,14 +17,11 @@ class AirAsteria:
 
         # BNO085.
         bno085_component = BNO085Component(i2c)
-        self._loop.add_component(bno085_component, i2c)
+        self._loop.add_component(bno085_component, i2c, 1)
 
         # Air RFM95W.
-        air_rfm95w_cs = digitalio.DigitalInOut(board.D5)
-        air_rfm95w_rst = digitalio.DigitalInOut(board.D6)
-        air_rfm95w_component = AirRFM95WComponent(spi, air_rfm95w_cs,
-                                                  air_rfm95w_rst)
-        self._loop.add_component(air_rfm95w_component)
+        air_rfm95w_component = AirRFM95WComponent(spi, board.D5, board.D6)
+        self._loop.add_component(air_rfm95w_component, 1)
 
     def run(self, int: steps):
         self._loop.run(steps)
