@@ -6,6 +6,8 @@ from base.loop import Loop
 from air.bno085 import BNO085Component
 from air.mcp9808 import MCP9808Component
 from air.air_rfm95w import AirRFM95WComponent
+from air.picamera import PiCameraComponent
+from air.lidar import LidarLiteComponent
 
 
 class AirAsteria:
@@ -28,6 +30,15 @@ class AirAsteria:
         # Air RFM95W.
         air_rfm95w_component = AirRFM95WComponent(spi, board.D5, board.D6)
         self._loop.add_component(air_rfm95w_component, 1)
+
+        # PiCamera Component.
+        picamera_component = PiCameraComponent()
+        self._loop.add_component(picamera_component, 1)
+
+        # Lidar Component.
+        lidar_component = LidarLiteComponent(i2c)
+        self._loop.add_component(lidar_component, 2)  # Add with lower frequency
+
 
     def run(self, steps: int):
         self._loop.run(steps)

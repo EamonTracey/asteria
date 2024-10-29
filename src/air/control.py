@@ -43,5 +43,13 @@ class ControlComponent(Component):
         elif command == 1:
             self._state.duty_cycle = int(SERVO_MAXIMUM_PULSE_WIDTH *
                                          SERVO_FREQUENCY * 2**16)
+        elif command == 2:
+            # Set duty cycle to center position
+            self._state.duty_cycle = int(((SERVO_MINIMUM_PULSE_WIDTH + SERVO_MAXIMUM_PULSE_WIDTH) / 2) * 
+                                         SERVO_FREQUENCY * 2**16)
+        else:
+            # Ierror handling
+            print(f"Unknown command received: {command}")
+            return
 
         self._pwm.duty_cycle = self._state.duty_cycle
