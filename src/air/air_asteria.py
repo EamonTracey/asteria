@@ -5,7 +5,7 @@ import digitalio
 from base.loop import Loop
 from air.bno085 import BNO085Component
 from air.mcp9808 import MCP9808Component
-from air.rfm95w import RFM95WComponent
+from air.air_rfm95w import AirRFM95WComponent
 
 
 class AirAsteria:

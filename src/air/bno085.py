@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 import adafruit_bno08x
+import adafruit_bno08x.i2c
 import busio
 
 from base.component import Component

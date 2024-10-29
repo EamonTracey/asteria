@@ -6,8 +6,8 @@ import busio
 import digitalio
 import microcontroller
 
-from base.command import CommandState
 from base.component import Component
+from ground.command import CommandState
 
 
 @dataclass
