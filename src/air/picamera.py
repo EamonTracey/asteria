@@ -30,7 +30,8 @@ class PiCameraComponent:
         """Record video for a given duration with a timestamped name."""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         output_path = os.path.join(self.run_folder, f"video_{timestamp}.h264")
-        print(f"Starting video recording: {output_path} for {duration} seconds")
+        print(
+            f"Starting video recording: {output_path} for {duration} seconds")
         self.camera.start_preview()
         self.camera.start_recording(output_path)
         time.sleep(duration)

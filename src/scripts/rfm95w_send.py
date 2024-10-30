@@ -6,7 +6,9 @@ import digitalio
 from base.component import Component
 from base.loop import Loop
 
+
 class SendComponent(Component):
+
     def __init__(self, rfm95w: adafruit_rfm9x.RFM9x):
         self._rfm95w = rfm95w
 
@@ -30,6 +32,7 @@ def main():
     loop.add_component(send_component, 1)
 
     loop.run(0)
+
 
 if __name__ == "__main__":
     main()
