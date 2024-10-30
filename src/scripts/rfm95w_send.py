@@ -16,8 +16,7 @@ class SendComponent(Component):
 
     def dispatch(self):
         self._count += 1
-        print(f"Sending message {self._count}")
-        self._rfm95w.send(b"Hello, Asteria!")
+        self._rfm95w.send(f"Hello, Asteria! {self._count}".encode())
 
 
 def main():
