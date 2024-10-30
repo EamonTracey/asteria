@@ -1,50 +1,64 @@
-import smbus
 import time
+import board
+import busio
+import colorama
 
+class GarminLidarLiteV4:
+    def __init__(self, i2c, address=0x62):
+        self.i2c = i2c
+        self.address = address
 
-class LidarLiteComponent:
-    LIDAR_I2C_ADDR = 0x62  # Default I2C address for LIDAR-Lite v4 LED
-    DISTANCE_REGISTER = 0x8f  # Register for reading distance
-    COMMAND_REGISTER = 0x00  # Register to initiate measurement
-    MEASURE_COMMAND = 0x04  # Command to start distance measurement
+    def write_register(self, reg, value):
+        # Write a byte to a specific register
+        # Create a byte array for the register and value
+        data = bytes([reg, value])
+        self.i2c.writeto(self.address, data)
 
-    def __init__(self, bus_number=1):
-        """
-        Initializes the LidarLiteComponent, which communicates with the LIDAR sensor over I2C.
-        :param bus_number: The I2C bus number (default is 1 for Raspberry Pi).
-        """
-        self.bus = smbus.SMBus(bus_number)
+    def read_register(self, reg, num_bytes=1):
+        # Write the register we want to read, then read the response
+        self.i2c.writeto(self.address, bytes([reg]))
+        result = bytearray(num_bytes)
+        self.i2c.readfrom_into(self.address, result)
+        return result
 
-    def measure_distance(self):
-        """
-        Triggers a distance measurement and reads the result.
-        :return: Measured distance in centimeters.
-        """
-        # Send command to take a distance measurement
-        self.bus.write_byte_data(self.LIDAR_I2C_ADDR, self.COMMAND_REGISTER, self.MEASURE_COMMAND)
-        time.sleep(0.02)  # Wait for measurement to be taken (20 ms)
+    def trigger_measurement(self):
+        # Step 1: Write 0x04 to register 0x00 to start measurement
+        self.write_register(0x00, 0x04)
 
-        # Read the measured distance from the LIDAR
-        high_byte = self.bus.read_byte_data(self.LIDAR_I2C_ADDR, self.DISTANCE_REGISTER)
-        low_byte = self.bus.read_byte_data(self.LIDAR_I2C_ADDR, self.DISTANCE_REGISTER + 1)
-        distance = (high_byte << 8) + low_byte
+    def is_measurement_complete(self):
+        # Step 2-3: Check if measurement is complete by reading 0x01 until LSB goes low
+        status = self.read_register(0x01)[0]
+        return (status & 0x01) == 0
+
+    def read_distance(self):
+        # Step 4: Read two bytes from 0x10 (low byte) and 0x11 (high byte)
+        low_byte = self.read_register(0x10)[0]
+        high_byte = self.read_register(0x11)[0]
+        # Combine bytes into a 16-bit value
+        distance = (high_byte << 8) | low_byte
         return distance
 
-    def alert_if_near_ground(self, threshold=50):
-        """
-        Measures the distance and prints an alert if below the threshold.
-        :param threshold: Distance threshold in cm (default is 500 cm).
-        """
-        distance = self.measure_distance()
-        if distance <= threshold:
-            print(f"ALERT: Distance is {distance} cm, which is below the threshold of {threshold} cm!")
-        else:
-            print(f"Distance is {distance} cm.")
+    def get_distance(self):
+        # Trigger measurement and wait for completion
+        self.trigger_measurement()
+        while not self.is_measurement_complete():
+            time.sleep(0.01)  # Sleep briefly to avoid overloading the I2C bus
+        return self.read_distance()
+
+# Example usage:
+i2c = busio.I2C(board.SCL, board.SDA)
+lidar = GarminLidarLiteV4(i2c)
 
 
-# Example usage
-if __name__ == "__main__":
-    lidar = LidarLiteComponent()
+try:
     while True:
-        lidar.alert_if_near_ground()
-        time.sleep(0.5)  # Delay between readings
+        distance = lidar.get_distance()
+        time.sleep(0.1)  # Take readings at 1-second intervals
+        if distance < 5:
+            print(f"{colorama.Fore.RED} CLOSE BY ({distance}cm)")
+        else:
+            print(f"{colorama.Fore.GREEN} FAR WAY ({distance}cm)")
+
+except KeyboardInterrupt:
+    print("Measurement stopped by user.")
+
