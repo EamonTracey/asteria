@@ -3,11 +3,11 @@ import busio
 import digitalio
 
 from base.loop import Loop
-from air.bno085 import BNO085Component
-from air.mcp9808 import MCP9808Component
 from air.air_rfm95w import AirRFM95WComponent
+from air.bno085 import BNO085Component
+from air.lidar_lite import LidarLiteComponent
+from air.mcp9808 import MCP9808Component
 from air.picamera import PiCameraComponent
-from air.lidar import LidarLiteComponent
 
 
 class AirAsteria:
@@ -37,8 +37,7 @@ class AirAsteria:
 
         # Lidar Component.
         lidar_component = LidarLiteComponent(i2c)
-        self._loop.add_component(lidar_component, 2)  # Add with lower frequency
-
+        self._loop.add_component(lidar_component, 2)
 
     def run(self, steps: int):
         self._loop.run(steps)
