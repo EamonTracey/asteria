@@ -5,7 +5,6 @@ import ipywidgets
 import ipywidgets.embed as embed
 from IPython.display import display
 from ipywidgets import VBox
-import socket
 import threading
 import numpy as np
 from pythreejs import Mesh, BufferGeometry, MeshStandardMaterial, PerspectiveCamera, Scene, AmbientLight, DirectionalLight, SpotLight, OrbitControls, Renderer, Matrix4
@@ -53,9 +52,9 @@ class LanderVisualization:
         self.load_model(model_paths[0], self.inside_scene)
         self.load_model(model_paths[1], self.outside_scene)
         
-        # Set up threading for receiving IMU data or simulating IMU data.
+        # Set up threading for receiving IMU data from file.
         self.stop_thread = False
-        self.thread = threading.Thread(target=self.simulate_imu_data)
+        self.thread = threading.Thread(target=self.use_real_imu_data, args=("REALIMUDATA",))
         self.thread.start()
 
     def load_model(self, model_path, scene):
@@ -89,25 +88,20 @@ class LanderVisualization:
         with open(file_name, 'w') as f:
             embed.embed_minimal_html(f, views=[box], title='Lander Visualization')
     
-    def simulate_imu_data(self):
-        """Simulates IMU data to update the model's orientation."""
-        while not self.stop_thread:
-            # Generate a simulated quaternion representing rotation around the z-axis.
-            angle_z = (time.time() % (4 * np.pi)) / 1.8  # Slower rotating angle for a full 360-degree rotation
-            if (time.time() % (8 * np.pi)) < (4 * np.pi):
-                quaternion_z = [np.cos(angle_z / 2), 0, 0, np.sin(angle_z / 2)]  # Rotate around the z-axis clockwise
-            else:
-                quaternion_z = [np.cos(angle_z / 2), 0, 0, -np.sin(angle_z / 2)]  # Rotate around the z-axis counter-clockwise
-            
-            # Generate a small teetering angle around the x-axis.
-            angle_x = 0.1 * np.sin(time.time() * 0.5)  # Small oscillation around x-axis
-            quaternion_x = [np.cos(angle_x / 2), np.sin(angle_x / 2), 0, 0]
-            
-            # Combine the two quaternions (x and z-axis rotations).
-            quaternion = self.combine_quaternions(quaternion_x, quaternion_z)
-            
-            self.update_orientation(quaternion)
-            time.sleep(0.03)  # Update every 30ms for smoother rotation
+    def use_real_imu_data(self, file_path):
+        """Uses real IMU data from a file to update the model's orientation."""
+        try:
+            with open(file_path, 'r') as f:
+                while not self.stop_thread:
+                    line = f.readline()
+                    if not line:
+                        f.seek(0)  # Restart reading the file when reaching the end
+                        continue
+                    quaternion = [float(x) for x in line.strip('()\n').split(', ')]
+                    self.update_orientation(quaternion)
+                    time.sleep(0.08)  # Update every 80ms for smoother rotation
+        except FileNotFoundError:
+            print(f"Error: File not found at {file_path}")
 
     def update_orientation(self, quaternion):
         """Updates the orientation of the models based on the received quaternion."""
