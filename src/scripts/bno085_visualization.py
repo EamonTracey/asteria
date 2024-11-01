@@ -7,12 +7,14 @@ import busio
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
+import os
 
 
 class BNO085Visualization:
 
     def __init__(self):
-        self.bno085 = adafruit_bno08x.i2c.BNO08X_I2C(busio.I2C())
+        self.bno085 = adafruit_bno08x.i2c.BNO08X_I2C(
+            busio.I2C(board.SCL, board.SDA))
         self.bno085.initialize()
         self.bno085.enable_feature(adafruit_bno08x.BNO_REPORT_ACCELEROMETER)
         self.bno085.enable_feature(adafruit_bno08x.BNO_REPORT_MAGNETOMETER)

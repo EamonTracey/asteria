@@ -51,11 +51,13 @@ class AirAsteria:
         self._loop.add_component(mcp9808_component, 1)
 
         # Temperature Regulation.
-        temperature_regulation_component = TemperatureRegulationComponent(mcp9808_state)
+        temperature_regulation_component = TemperatureRegulationComponent(
+            mcp9808_state)
         self._loop.add_component(temperature_regulation_component, 1)
 
         # Control.
-        control_component = ControlComponent(board.D13, bno085_state, air_rfm95w_state)
+        control_component = ControlComponent(board.D13, bno085_state,
+                                             air_rfm95w_state)
         self._loop.add_component(control_component, 1)
 
         # Log
