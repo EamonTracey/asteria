@@ -6,7 +6,7 @@ import pwmio
 from base.component import Component
 from base.constants import SERVO_FREQUENCY, SERVO_MINIMUM_PULSE_WIDTH, SERVO_MAXIMUM_PULSE_WIDTH
 from air.bno085 import BNO085State
-from air.rfm95w import AirRFM95WState
+from air.air_rfm95w import AirRFM95WState
 
 
 @dataclass
@@ -17,14 +17,14 @@ class ControlState:
 class ControlComponent(Component):
 
     def __init__(self, pwm: microcontroller.Pin, bno085_state: BNO085State,
-                 rfm95w_state: AirRFM95WState):
+                 air_rfm95w_state: AirRFM95WState):
         self._state = ControlState()
 
         self._pwm = pwmio.PWMOut(pwm,
-                                 frequency=FREQUENCY,
+                                 frequency=SERVO_FREQUENCY,
                                  variable_frequency=False)
         self._bno085_state = bno085_state
-        self._rfm95w_state = rfm95w_state
+        self._air_rfm95w_state = air_rfm95w_state
 
     @property
     def state(self):
@@ -33,7 +33,7 @@ class ControlComponent(Component):
     def dispatch(self):
         # TODO: Implement controller.
 
-        command = self._rfm95w_state.command
+        command = self._air_rfm95w_state.command
         if command is None:
             return
 
