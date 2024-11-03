@@ -1,7 +1,6 @@
 # SPDX-FileCopyrightText: 2018 Brent Rubell for Adafruit Industries
 #
 # SPDX-License-Identifier: MIT
-
 """
 Wiring Check, Pi Radio w/RFM9x
 
@@ -65,20 +64,19 @@ while True:
     # Check buttons
     if not btnA.value:
         # Button A Pressed
-        display.text('Ada', width-85, height-7, 1)
+        display.text('Ada', width - 85, height - 7, 1)
         display.show()
         time.sleep(0.1)
     if not btnB.value:
         # Button B Pressed
-        display.text('Fruit', width-75, height-7, 1)
+        display.text('Fruit', width - 75, height - 7, 1)
         display.show()
         time.sleep(0.1)
     if not btnC.value:
         # Button C Pressed
-        display.text('Radio', width-65, height-7, 1)
+        display.text('Radio', width - 65, height - 7, 1)
         display.show()
         time.sleep(0.1)
 
     display.show()
     time.sleep(0.1)
-

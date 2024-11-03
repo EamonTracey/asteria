@@ -6,7 +6,7 @@ import pwmio
 from base.component import Component
 from base.constants import SERVO_FREQUENCY, SERVO_MINIMUM_PULSE_WIDTH, SERVO_MAXIMUM_PULSE_WIDTH
 from air.bno085 import BNO085State
-from air.air_rfm95w import AirRFM95WState
+from air.rfm95w import RFM95WState
 
 
 @dataclass
@@ -17,7 +17,7 @@ class ControlState:
 class ControlComponent(Component):
 
     def __init__(self, pwm: microcontroller.Pin, bno085_state: BNO085State,
-                 air_rfm95w_state: AirRFM95WState):
+                 air_rfm95w_state: RFM95WState):
         self._state = ControlState()
 
         self._pwm = pwmio.PWMOut(pwm,

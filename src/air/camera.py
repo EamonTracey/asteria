@@ -4,7 +4,7 @@ from picamera import PiCamera
 from datetime import datetime
 
 
-class PiCameraComponent:
+class CameraComponent:
 
     def __init__(self, run_index: int):
         # Initialize the camera
