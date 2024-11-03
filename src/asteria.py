@@ -19,7 +19,7 @@ def asteria():
               default=None,
               help="The path to which to write the log file.")
 def air(log_file: Optional[str]):
-    air_asteria = AirAsteria()
+    air_asteria = AirAsteria(log_file)
     air_asteria.run(0)
 
 
