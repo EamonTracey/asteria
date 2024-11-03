@@ -1,7 +1,7 @@
 import click
 
-from air.air_asteria import AirAsteria
-from ground.ground_asteria import GroundAsteria
+from air.asteria import Asteria as AirAsteria
+from ground.asteria import Asteria as GroundAsteria
 
 
 @click.group()
