@@ -3,6 +3,8 @@ adafruit-circuitpython-mcp9808
 adafruit-circuitpython-rfm9x
 click
 jupyterlab
+Pillow
 pythreejs
+tk
 trimesh
 yapf
