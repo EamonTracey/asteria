@@ -11,10 +11,16 @@ from pythreejs import Mesh, BufferGeometry, MeshStandardMaterial, PerspectiveCam
 import time
 import os
 
+# set temperature threshold
+MIN_TEMPERATURE = 30
+# set lidar threshold
+LIDAR_MIN = 10
+
+
 # Setup Tkinter window
 root = tk.Tk()
 root.title("ASTERIA Monitoring")
-root.geometry("900x1000")
+root.geometry("800x800")
 root.configure(bg="#f0f0f0")
 
 # Title label
@@ -58,7 +64,7 @@ orientation_frame = tk.Frame(root, bg="#ffffff", bd=2, relief=tk.SOLID)
 orientation_frame.pack(pady=20, padx=20, fill=tk.BOTH, expand=True)
 orientation_label_title = tk.Label(orientation_frame, text="Orientation Visualizer", font=("Helvetica", 14, "bold"), anchor="w", bg="#ffffff")
 orientation_label_title.pack(pady=5)
-orientation_canvas = tk.Canvas(orientation_frame, width=400, height=400, bg="#f0f0f0")
+orientation_canvas = tk.Canvas(orientation_frame, width=350, height=350, bg="#f0f0f0")
 orientation_canvas.pack()
 
 # Boolean command function to simulate sending land commands back
@@ -69,13 +75,108 @@ def send_command(land_top):
 
 # Buttons for user input
 button_frame = tk.Frame(root, bg="#f0f0f0")
-button_frame.pack(pady=20)
+button_frame.pack(pady=10)
 
 top_button = tk.Button(button_frame, text="Land on Top", command=lambda: send_command(True), font=("Helvetica", 12), bg="#4CAF50", fg="white", padx=20, pady=10)
 top_button.pack(side=tk.LEFT, padx=20)
 
 bottom_button = tk.Button(button_frame, text="Land on Bottom", command=lambda: send_command(False), font=("Helvetica", 12), bg="#F44336", fg="white", padx=20, pady=10)
 bottom_button.pack(side=tk.RIGHT, padx=20)
+
+# Monitor temperature data
+def temperature_monitoring():
+    # Get real time temperature value from temperature sensor
+    temperature = read_temperature()
+    # check if temperature is not null
+    if temperature is None:
+        # display to monitor that no temperature data is available
+        ##########
+        return temperature
+    # check if temperature is below threshold
+    if temperature < MIN_TEMPERATURE:
+        # send command to turn on heater
+        ##########
+        # display to monitor to show that temp is below the threshold and heaters are on
+        ##########
+    return temperature
+
+def read_temperature():
+    # get real time temperature value from temperature sensor
+    temperature = ""
+    ######################
+    return temperature
+
+
+def lidar_monitoring():
+    # Get real time lidar distance value from lidar sensor
+    lidar = read_lidar()
+    # check if lidar is not null
+    if lidar is None:
+        # display to monitor that no lidar data is available
+        ##########
+        return lidar
+    # check if lidar is below threshold
+    if lidar < LIDAR_MIN:
+        # send command to deploy legs on side currently supposed to land on
+        ##########
+        # display to monitor to show that lidar is below the threshold and legs are deployed
+        ##########
+    return lidar
+
+def read_lidar():
+    # get real time lidar distance value from lidar sensor
+    lidar = ""
+    ######################
+    return lidar
+
+
+def camera_monitoring():
+    # Get real time image data from camera sensor
+    image_data = read_camera()
+    # check if image data is not null
+    if image_data is None:
+        # display to monitor that no image data is available
+        ##########
+        return image_data
+    return image_data
+
+def read_camera():
+    # get real time image data from camera sensor
+    image_data = ""
+    ######################
+    return image_data
+
+def imu_monitoring():
+    # Get real time IMU data from IMU sensor
+    imu_data = read_imu()
+    # check if IMU data is not null
+    if imu_data is None:
+        # display to monitor that no IMU data is available
+        ##########
+        return imu_data
+    return imu_data
+
+def read_imu():
+    # get real time IMU data from IMU sensor
+    imu_data = ""
+    ######################
+    return imu_data
+
+
+def monitor_incoming():
+    while True:
+        # Get real time temperature value from temperature sensor
+        temperature = temperature_monitoring()
+        # Get real time lidar distance value from lidar sensor
+        lidar = lidar_monitoring()
+        # Get real time image data from camera sensor
+        image_data = camera_monitoring()
+        # Get real time IMU data from IMU sensor
+        imu_data = imu_monitoring()
+        # Update the GUI with the data
+        root.after(0, update_gui, temperature, lidar, image_data, imu_data)
+        time.sleep(.2)  #  data coming in however many seconds
+
 
 # Read IMU data from file
 def read_imu_data(file_path):
@@ -97,7 +198,7 @@ def read_imu_data(file_path):
 
             # Update the GUI with the data
             root.after(0, update_gui, temperature, orientation, lidar_distance, image_data)
-            time.sleep(1)  # Simulate data coming in every second
+            time.sleep(.2)  # Simulate data coming in every second
 
 def quaternion_to_euler(quaternion):
     w, x, y, z = quaternion
