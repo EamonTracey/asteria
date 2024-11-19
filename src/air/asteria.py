@@ -20,11 +20,6 @@ class Asteria:
         # Loop!
         self._loop = Loop(1)
 
-        # Naming is hard.
-        utc_date = datetime.datetime.now(datetime.UTC)
-        utc_date_string = utc_date.strftime("%Y%m%d%H%M%S")
-        name = f"Asteria {utc_date_string}"
-
         # Connect to the I2C and SPI buses.
         i2c = board.I2C()
         spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
@@ -39,7 +34,7 @@ class Asteria:
         rfm95w_state = rfm95w_component.state
         self._loop.add_component(rfm95w_component, 1)
 
-        # Lidar .
+        # Lidar.
         lidar_component = LidarComponent(i2c)
         self._loop.add_component(lidar_component, 1)
 
