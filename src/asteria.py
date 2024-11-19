@@ -7,6 +7,8 @@ import click
 from air.asteria import Asteria as AirAsteria
 from ground.asteria import Asteria as GroundAsteria
 
+logger = logging.getLogger(__name__)
+
 
 @click.group()
 def asteria():
@@ -40,7 +42,7 @@ def air(name: Optional[str]):
     logger.info("Developed by Sarah Kopfer, Nicholas Palma, and Eamon Tracey.")
     logger.info(f"{name=}")
 
-    air_asteria = AirAsteria(log_file)
+    air_asteria = AirAsteria(name)
     air_asteria.run(0)
 
 

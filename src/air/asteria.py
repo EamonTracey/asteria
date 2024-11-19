@@ -59,7 +59,7 @@ class Asteria:
         self._loop.add_component(control_component, 1)
 
         # Log
-        log_component = LogComponent(f"{name}.csv}")
+        log_component = LogComponent(f"{name}.csv")
         self._loop.add_component(log_component, 1)
 
     def run(self, steps: int):

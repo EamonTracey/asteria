@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 from base.component import Component
 from base.loop import LoopState
-from air.bno085 import BNO085
+from air.bno085 import BNO085State
 from air.lidar import LidarState
 from air.mcp9808 import MCP9808State
 
