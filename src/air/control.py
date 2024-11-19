@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import logging
 
 import microcontroller
 import pwmio
@@ -7,6 +8,8 @@ from base.component import Component
 from base.constants import SERVO_FREQUENCY, SERVO_MINIMUM_PULSE_WIDTH, SERVO_MAXIMUM_PULSE_WIDTH
 from air.bno085 import BNO085State
 from air.rfm95w import RFM95WState
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -20,37 +23,36 @@ class ControlComponent(Component):
                  air_rfm95w_state: RFM95WState):
         self._state = ControlState()
 
+        self._bno085_state = bno085_state
+        self._air_rfm95w_state = air_rfm95w_state
+
         self._pwm = pwmio.PWMOut(pwm,
                                  frequency=SERVO_FREQUENCY,
                                  variable_frequency=False)
-        self._bno085_state = bno085_state
-        self._air_rfm95w_state = air_rfm95w_state
 
     @property
     def state(self):
         return self._state
 
     def dispatch(self):
-        # TODO: Implement controller.
+        # TODO?: Implement controller.
 
         command = self._air_rfm95w_state.command
-        if command is None:
-            return
 
         if command == 0:
+            # Minimum position.
             self._state.duty_cycle = int(SERVO_MINIMUM_PULSE_WIDTH *
                                          SERVO_FREQUENCY * 2**16)
         elif command == 1:
+            # Maximum position.
             self._state.duty_cycle = int(SERVO_MAXIMUM_PULSE_WIDTH *
                                          SERVO_FREQUENCY * 2**16)
         elif command == 2:
-            # Set duty cycle to center position
+            # Center position.
             self._state.duty_cycle = int(
                 ((SERVO_MINIMUM_PULSE_WIDTH + SERVO_MAXIMUM_PULSE_WIDTH) / 2) *
                 SERVO_FREQUENCY * 2**16)
         else:
-            # Ierror handling
-            print(f"Unknown command received: {command}")
-            return
+            logger.info(f"Unknown command received: {command}")
 
         self._pwm.duty_cycle = self._state.duty_cycle
