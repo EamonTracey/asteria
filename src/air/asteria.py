@@ -19,6 +19,7 @@ class Asteria:
     def __init__(self, name: str):
         # Loop!
         self._loop = Loop(1)
+        loop_state = self._loop.state
 
         # Connect to the I2C and SPI buses.
         i2c = board.I2C()
@@ -36,6 +37,7 @@ class Asteria:
 
         # Lidar.
         lidar_component = LidarComponent(i2c)
+        lidar_state = lidar_component.state
         self._loop.add_component(lidar_component, 1)
 
         # MCP9808.
@@ -54,7 +56,8 @@ class Asteria:
         self._loop.add_component(control_component, 1)
 
         # Log
-        log_component = LogComponent(f"{name}.csv")
+        log_component = LogComponent(f"{name}.csv", loop_state, bno085_state,
+                                     lidar_state, mcp9808_state)
         self._loop.add_component(log_component, 1)
 
     def run(self, steps: int):
