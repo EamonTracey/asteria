@@ -9,8 +9,11 @@ rst = digitalio.DigitalInOut(board.D6)
 rfm95w = adafruit_rfm9x.RFM9x(spi, cs, rst, 915)
 
 while True:
-    command = input("Send a command (0=minimum 1=maximum 2=medium)")
-    if not command.isnumeric() or command not in [0, 1, 2]:
+    command = input("Send a command (0=minimum 1=maximum 2=medium): ")
+    if command.lower() in ["q", "quit", "exit"]:
+        break
+    if command not in ["0", "1", "2"]:
+        print("Error: please enter 0, 1, or 2.")
         continue
-    command = int.to_bytes(1, byteorder="big")
+    command = int(command).to_bytes(1, byteorder="big")
     rfm95w.send(command)
