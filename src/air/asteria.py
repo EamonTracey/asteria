@@ -8,7 +8,7 @@ from base.loop import Loop
 from air.rfm95w import RFM95WComponent
 from air.bno085 import BNO085Component
 from air.control import ControlComponent
-from air.lidar_lite import LidarLiteComponent
+from air.lidar import LidarComponent
 from air.log import LogComponent
 from air.mcp9808 import MCP9808Component
 from air.temperature_regulation import TemperatureRegulationComponent
@@ -16,7 +16,7 @@ from air.temperature_regulation import TemperatureRegulationComponent
 
 class Asteria:
 
-    def __init__(self, log_file: str = None):
+    def __init__(self, name: str):
         # Loop!
         self._loop = Loop(1)
 
@@ -24,10 +24,6 @@ class Asteria:
         utc_date = datetime.datetime.now(datetime.UTC)
         utc_date_string = utc_date.strftime("%Y%m%d%H%M%S")
         name = f"Asteria {utc_date_string}"
-
-        # Handle optional configurations.
-        if log_file is None:
-            log_file = f"{name}.log"
 
         # Connect to the I2C and SPI buses.
         i2c = board.I2C()
@@ -43,9 +39,9 @@ class Asteria:
         rfm95w_state = rfm95w_component.state
         self._loop.add_component(rfm95w_component, 1)
 
-        # Lidar Lite.
-        lidar_lite_component = LidarLiteComponent(i2c)
-        self._loop.add_component(lidar_lite_component, 1)
+        # Lidar .
+        lidar_component = LidarComponent(i2c)
+        self._loop.add_component(lidar_component, 1)
 
         # MCP9808.
         mcp9808_component = MCP9808Component(i2c)
@@ -63,7 +59,7 @@ class Asteria:
         self._loop.add_component(control_component, 1)
 
         # Log
-        log_component = LogComponent(log_file)
+        log_component = LogComponent(f"{name}.csv}")
         self._loop.add_component(log_component, 1)
 
     def run(self, steps: int):

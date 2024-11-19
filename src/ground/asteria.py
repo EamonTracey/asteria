@@ -21,8 +21,8 @@ class Asteria:
         self._loop.add_component(command_component, 1)
 
         # RFM95W.
-        rfm95w_component = RFM95WComponent(
-            spi, board.D5, board.D6, command_state)
+        rfm95w_component = RFM95WComponent(spi, board.D5, board.D6,
+                                           command_state)
         self._loop.add_component(rfm95w_component, 1)
 
     def run(self, steps: int):

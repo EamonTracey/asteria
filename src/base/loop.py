@@ -1,7 +1,10 @@
 from dataclasses import dataclass, field
+import logging
 import time
 
 from base.component import Component
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -11,6 +14,8 @@ class LoopState:
 
     components: list = field(default_factory=list)
 
+    first_time: float = 0
+    time: float = 0
     step_count: int = 0
     slip_count: int = 0
 
@@ -23,6 +28,10 @@ class Loop:
         self._state = LoopState()
         self._state.frequency = frequency
         self._state.period = 1 / frequency
+
+        logger.info("Loop initialized.")
+        logger.info(f"{self._state.frequency=}")
+        logger.info(f"{self._state.period=}")
 
     @property
     def state(self):
@@ -38,13 +47,18 @@ class Loop:
         assert frequency > 0
         assert self._state.frequency % frequency == 0
 
+        logger.info(
+            f"Adding component {type(component).__name__} with frequency {frequency} Hz."
+        )
         self._state.components.append((component, frequency))
 
     def run(self, steps: int):
         iterator = range(steps) if steps > 0 else iter(int, 1)
 
         start = time.time()
+        self._state.first_time = start
         for _ in iterator:
+            self._state.time = start
             self._step()
             self._state.step_count += 1
 
