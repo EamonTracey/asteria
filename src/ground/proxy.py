@@ -4,9 +4,6 @@ import socket
 import traceback
 
 import adafruit_rfm9x
-import busio
-import digitalio
-import microcontroller
 
 from base.component import Component
 
@@ -22,19 +19,16 @@ class ProxyState:
 
 class ProxyComponent(Component):
 
-    def __init__(self, host: tuple[str, int], port: int, spi: busio.SPI,
-                 cs: microcontroller.Pin, rst: microcontroller.Pin):
+    def __init__(self, host: tuple[str, int], port: int,
+                 rfm95w: adafruit_rfm9x.RFM9x):
         self._state = ProxyState()
 
         self._host = host
+        self._rfm95w = rfm95w
 
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._socket.bind(("0.0.0.0", port))
         self._socket.setblocking(False)
-
-        cs = digitalio.DigitalInOut(cs)
-        rst = digitalio.DigitalInOut(rst)
-        self._rfm95w = adafruit_rfm9x.RFM9x(spi, cs, rst, 915)
 
         logger.info(f"Initialized proxy between host and air.")
         logger.info(f"{port=}")
