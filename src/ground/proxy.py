@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 import logging
 import socket
+import traceback
 
 import adafruit_rfm9x
 import busio
@@ -27,10 +28,9 @@ class ProxyComponent(Component):
 
         self._host = host
 
-        self._recv_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self._recv_socket.bind(("0.0.0.0", port))
-        self._recv_socket.setblocking(False)
-        self._send_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self._socket.bind(("0.0.0.0", port))
+        self._socket.setblocking(False)
 
         cs = digitalio.DigitalInOut(cs)
         rst = digitalio.DigitalInOut(rst)
@@ -48,7 +48,7 @@ class ProxyComponent(Component):
         for _ in range(MAX_MESSAGES):
             # Receive data from the host machine to be sent to the air.
             try:
-                message, _ = self._recv_socket.recvfrom(4096)
+                message, _ = self._socket.recvfrom(4096)
                 self._proxy_to_air(message)
             except BlockingIOError:
                 break
@@ -61,7 +61,15 @@ class ProxyComponent(Component):
             self._proxy_to_host(bytes(message))
 
     def _proxy_to_air(self, message: bytes):
-        self._rfm95w.send(message)
+        success = self._rfm95w.send(message)
+        if not success:
+            logger.error(
+                f"Failed to proxy {message=} to air: {traceback.format_exc()}")
 
-    def _proxy_to_host(self, messages: bytes):
-        self._send_socket.sendto(message, self._host)
+    def _proxy_to_host(self, message: bytes):
+        try:
+            self._socket.sendto(message, self._host)
+        except BlockingIOError:
+            logger.error(
+                f"Failed to proxy {message=} to host: {traceback.format_exc()}"
+            )
