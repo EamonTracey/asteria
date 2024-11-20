@@ -8,10 +8,13 @@ SERVO_MAXIMUM_PULSE_WIDTH = 0.002
 
 duty_cycle_minimum = int(SERVO_MINIMUM_PULSE_WIDTH * SERVO_FREQUENCY * 2**16)
 duty_cycle_maximum = int(SERVO_MAXIMUM_PULSE_WIDTH * SERVO_FREQUENCY * 2**16)
-duty_cycle_center = int((SERVO_MINIMUM_PULSE_WIDTH + SERVO_MAXIMUM_PULSE_WIDTH) / 2 * SERVO_FREQUENCY * 2**16)
+duty_cycle_center = int(
+    (SERVO_MINIMUM_PULSE_WIDTH + SERVO_MAXIMUM_PULSE_WIDTH) / 2 *
+    SERVO_FREQUENCY * 2**16)
 
-pwm = pwmio.PWMOut(board.D13, frequency=SERVO_FREQUENCY, variable_frequency=False)
-
+pwm = pwmio.PWMOut(board.D13,
+                   frequency=SERVO_FREQUENCY,
+                   variable_frequency=False)
 
 while True:
     duty_cycle = input("Send a duty_cycle (0=minimum 1=maximum 2=medium): ")
@@ -21,4 +24,6 @@ while True:
         print("Error: please enter 0, 1, or 2.")
         continue
     duty_cycle = int(duty_cycle)
-    pwm.duty_cycle = [duty_cycle_minimum, duty_cycle_maximum, duty_cycle_center][duty_cycle]
+    pwm.duty_cycle = [
+        duty_cycle_minimum, duty_cycle_maximum, duty_cycle_center
+    ][duty_cycle]
