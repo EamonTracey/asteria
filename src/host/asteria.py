@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 
 from pyqtgraph.opengl import GLBoxItem
 
+
 class Asteria(QMainWindow):
 
     def __init__(self, name: str, ground: tuple[str, int], port: int):
@@ -48,15 +49,13 @@ class Asteria(QMainWindow):
         telemetry_layout = QVBoxLayout()
         telemetry_label = QLabel("Telemetry", self)
         telemetry_label.setStyleSheet("font-weight: bold; font-size: 16px;")
-        orientation_label = QLabel(
-            f"Orientation: {self.orientation}", self)
-        temperature_label = QLabel(f"Temperature (°C): {self.temperature}",
-                                   self)
-        proximity_label = QLabel(f"Proximity (m): {self.proximity}", self)
+        self.orientation_label = QLabel(f"Orientation (q): -", self)
+        self.temperature_label = QLabel(f"Temperature (°C): -", self)
+        self.proximity_label = QLabel(f"Proximity (m): -", self)
         telemetry_layout.addWidget(telemetry_label)
-        telemetry_layout.addWidget(orientation_label)
-        telemetry_layout.addWidget(temperature_label)
-        telemetry_layout.addWidget(proximity_label)
+        telemetry_layout.addWidget(self.orientation_label)
+        telemetry_layout.addWidget(self.temperature_label)
+        telemetry_layout.addWidget(self.proximity_label)
         main_layout.addLayout(telemetry_layout)
 
         # Command.
@@ -80,11 +79,20 @@ class Asteria(QMainWindow):
         # Visualization.
         visualization_layout = QVBoxLayout()
         visualization_label = QLabel("Visualization", self)
-        visualization_label.setStyleSheet("font-weight: bold; font-size: 16px;")
+        visualization_label.setStyleSheet(
+            "font-weight: bold; font-size: 16px;")
         visualization_layout.addWidget(visualization_label)
         main_layout.addLayout(visualization_layout)
 
-        main_layout.addItem(QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding))
+        main_layout.addItem(
+            QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding))
+
+        # Info.
+        info_layout = QHBoxLayout()
+        connected_label = QLabel(f"Connected to ground station @ {self.ground[0]}:{self.ground[1]}")
+        connected_label.setStyleSheet("color: green; font-weight: bold; font-size: 10px;")
+        info_layout.addWidget(connected_label)
+        main_layout.addLayout(info_layout)
 
         # Finalize.
         self.setCentralWidget(central_widget)
@@ -94,7 +102,15 @@ class Asteria(QMainWindow):
         logger.info(f"Sent {command=} to ground.")
 
     def update_telemetry(self, telemetry: bytes):
-        logger.info(f"Receive {telemetry=} from ground.")
+        import random
+        self.orientation = tuple(random.random() for _ in range(4))
+        self.temperature = random.randint(0, 100)
+        self.proximity = random.randint(0, 30)
+        self.orientation_label.setText(
+            "Orientation (q): ({:.3f}, {:.3f}, {:.3f}, {:.3f})".
+            format(*self.orientation))
+        self.temperature_label.setText(f"Temperature (°C): {self.temperature}")
+        self.proximity_label.setText(f"Proximity (m): {self.proximity}")
 
     def run(self):
         self.show()
@@ -111,5 +127,7 @@ class TelemetryThread(QThread):
 
     def run(self):
         while True:
-            telemetry, _ = self._socket.recvfrom(4096)
-            self.update_telemetry.emit(telemetry)
+            # telemetry, _ = self._socket.recvfrom(4096)
+            telemetry = b""
+            time.sleep(0.5)
+            self.update_telemetry.emit((telemetry, ))

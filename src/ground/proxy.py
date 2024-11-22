@@ -65,9 +65,7 @@ class ProxyComponent(Component):
         try:
             self._socket.sendto(message, self._host)
         except BlockingIOError:
-            logger.error(
-                f"Failed to proxy {message=} from air to host: "
-                "{traceback.format_exc()}"
-            )
+            logger.error(f"Failed to proxy {message=} from air to host: "
+                         "{traceback.format_exc()}")
         else:
             logger.info(f"Proxied {message=} from air to host.")
