@@ -40,11 +40,14 @@ class ButtonsComponent(Component):
         return self._state
 
     def dispatch(self):
+        message = None
         if not self._button1.value:
-            self._rfm95w.send(b"\x00")
-
+            message = b"\x00"
         if not self._button2.value:
-            self._rfm95w.send(b"\x01")
-
+            message = b"\x01"
         if not self._button3.value:
-            self._rfm95w.send(b"\x02")
+            message = b"\x02"
+
+        if message is not None:
+            self._rfm95w.send(message)
+            logger.info(f"Sent {message=} to air.")

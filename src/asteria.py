@@ -33,7 +33,7 @@ def air(name: Optional[str]):
     if name is None:
         utc_date = datetime.datetime.now(datetime.UTC)
         utc_date_string = utc_date.strftime("%Y%m%d%H%M%S")
-        name = f"Asteria {utc_date_string}"
+        name = f"Asteria Air {utc_date_string}"
 
     # Initialize logging.
     logging.basicConfig(
@@ -73,7 +73,7 @@ def ground(host: str, name: Optional[str], port: int, host_port: int):
     if name is None:
         utc_date = datetime.datetime.now(datetime.UTC)
         utc_date_string = utc_date.strftime("%Y%m%d%H%M%S")
-        name = f"Asteria {utc_date_string}"
+        name = f"Asteria Ground {utc_date_string}"
 
     # Initialize logging.
     logging.basicConfig(

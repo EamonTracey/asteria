@@ -57,13 +57,17 @@ class ProxyComponent(Component):
     def _proxy_to_air(self, message: bytes):
         success = self._rfm95w.send(message)
         if not success:
-            logger.error(
-                f"Failed to proxy {message=} to air: {traceback.format_exc()}")
+            logger.error(f"Failed to proxy {message=} from host to air.")
+        else:
+            logger.info("Proxied {message=} from host to air.")
 
     def _proxy_to_host(self, message: bytes):
         try:
             self._socket.sendto(message, self._host)
         except BlockingIOError:
             logger.error(
-                f"Failed to proxy {message=} to host: {traceback.format_exc()}"
+                f"Failed to proxy {message=} from air to host: "
+                "{traceback.format_exc()}"
             )
+        else:
+            logger.info("Proxied {message=} from air to host.")

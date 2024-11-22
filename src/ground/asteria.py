@@ -17,8 +17,8 @@ class Asteria:
         spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
 
         # Initialize the RFM95W.
-        cs = digitalio.DigitalInOut(cs)
-        rst = digitalio.DigitalInOut(rst)
+        cs = digitalio.DigitalInOut(board.CE1)
+        rst = digitalio.DigitalInOut(board.D25)
         rfm95w = adafruit_rfm9x.RFM9x(spi, cs, rst, 915)
 
         # Proxy.
