@@ -59,7 +59,7 @@ class ProxyComponent(Component):
         if not success:
             logger.error(f"Failed to proxy {message=} from host to air.")
         else:
-            logger.info("Proxied {message=} from host to air.")
+            logger.info(f"Proxied {message=} from host to air.")
 
     def _proxy_to_host(self, message: bytes):
         try:
@@ -70,4 +70,4 @@ class ProxyComponent(Component):
                 "{traceback.format_exc()}"
             )
         else:
-            logger.info("Proxied {message=} from air to host.")
+            logger.info(f"Proxied {message=} from air to host.")
