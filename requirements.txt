@@ -5,6 +5,7 @@ adafruit-circuitpython-rfm9x
 click
 jupyterlab
 picamera
+PySide6
 pythreejs
 RPi.GPIO
 trimesh
