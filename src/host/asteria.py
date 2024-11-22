@@ -1,11 +1,18 @@
+import logging
 import socket
 import sys
 import time
 
+import numpy as np
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QLabel, QPushButton,
-                             QVBoxLayout, QWidget, QHBoxLayout, QSpacerItem, QSizePolicy)
+                             QVBoxLayout, QWidget, QHBoxLayout, QSpacerItem,
+                             QSizePolicy)
 from PyQt5.QtCore import QTimer, QThread, pyqtSignal
+from pyqtgraph.opengl import GLViewWidget, MeshData, GLMeshItem
 
+logger = logging.getLogger(__name__)
+
+from pyqtgraph.opengl import GLBoxItem
 
 class Asteria(QMainWindow):
 
@@ -13,65 +20,81 @@ class Asteria(QMainWindow):
         super().__init__()
 
         self.name = name
-        self._ground = ground
+        self.ground = ground
+        self.port = port
 
-        self.orientation = "-"
-        self.temperature = "-"
-        self.distance = "-"
+        # Create the socket to send commands to the ground.
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-        # Initialize the GUI
+        # Create the GUI.
+        self.orientation = None
+        self.temperature = None
+        self.proximity = None
         self.init_ui()
 
-        # Start telemetry updates in a separate thread
+        # Spawn the telemetry thread to receive telemetry.
         self.telemetry_thread = TelemetryThread(port)
         self.telemetry_thread.update_telemetry.connect(self.update_telemetry)
         self.telemetry_thread.start()
 
     def init_ui(self):
-        self.setWindowTitle(f"{self.name}")
+        # Setup.
+        self.setWindowTitle(self.name)
         self.setGeometry(100, 100, 400, 300)
-
         central_widget = QWidget(self)
         main_layout = QVBoxLayout(central_widget)
 
-        # Telemetry display
+        # Telemetry.
         telemetry_layout = QVBoxLayout()
-        telemetry_label = QLabel("Asteria Ground Station", self)
+        telemetry_label = QLabel("Telemetry", self)
         telemetry_label.setStyleSheet("font-weight: bold; font-size: 16px;")
+        orientation_label = QLabel(
+            f"Orientation: {self.orientation}", self)
+        temperature_label = QLabel(f"Temperature (°C): {self.temperature}",
+                                   self)
+        proximity_label = QLabel(f"Proximity (m): {self.proximity}", self)
         telemetry_layout.addWidget(telemetry_label)
-
-        self.orientation_label = QLabel(f"Orientation: {self.orientation}",
-                                        self)
-        self.temperature_label = QLabel(f"Temperature: {self.temperature}",
-                                        self)
-        self.distance_label = QLabel(f"Distance: {self.distance}", self)
-
-        telemetry_layout.addWidget(self.orientation_label)
-        telemetry_layout.addWidget(self.temperature_label)
-        telemetry_layout.addWidget(self.distance_label)
-
-        spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
-        telemetry_layout.addItem(spacer)
-
+        telemetry_layout.addWidget(orientation_label)
+        telemetry_layout.addWidget(temperature_label)
+        telemetry_layout.addWidget(proximity_label)
         main_layout.addLayout(telemetry_layout)
 
-        # Command buttons
-        #command_layout = QHBoxLayout()
-        #self.command_buttons = []
-        #for i in range(3):
-        #    button = QPushButton(f"Command {i + 1}", self)
-        #    button.clicked.connect(lambda _, idx=i + 1: self.send_command(idx))
-        #    command_layout.addWidget(button)
-        #    self.command_buttons.append(button)
-        #main_layout.addLayout(command_layout)
+        # Command.
+        command_layout = QVBoxLayout()
+        command_label = QLabel("Command", self)
+        command_label.setStyleSheet("font-weight: bold; font-size: 16px;")
+        button_layout = QHBoxLayout()
+        minimum_button = QPushButton("Minimum", self)
+        minimum_button.clicked.connect(lambda _: self.send_command(b"\x00"))
+        center_button = QPushButton("Center", self)
+        center_button.clicked.connect(lambda _: self.send_command(b"\x01"))
+        maximum_button = QPushButton("Maximum", self)
+        maximum_button.clicked.connect(lambda _: self.send_command(b"\x02"))
+        button_layout.addWidget(minimum_button)
+        button_layout.addWidget(center_button)
+        button_layout.addWidget(maximum_button)
+        command_layout.addWidget(command_label)
+        command_layout.addLayout(button_layout)
+        main_layout.addLayout(command_layout)
 
+        # Visualization.
+        visualization_layout = QVBoxLayout()
+        visualization_label = QLabel("Visualization", self)
+        visualization_label.setStyleSheet("font-weight: bold; font-size: 16px;")
+        visualization_layout.addWidget(visualization_label)
+        main_layout.addLayout(visualization_layout)
+
+        main_layout.addItem(QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding))
+
+        # Finalize.
         self.setCentralWidget(central_widget)
 
-    def send_command(self):
-        ...
+    def send_command(self, command: bytes):
+        self.socket.sendto(command, self.ground)
+        logger.info(f"Sent {command=} to ground.")
 
     def update_telemetry(self, telemetry: bytes):
-        ...
+        logger.info(f"Receive {telemetry=} from ground.")
 
     def run(self):
         self.show()

@@ -47,14 +47,14 @@ class ControlComponent(Component):
             self._state.duty_cycle = int(SERVO_MINIMUM_PULSE_WIDTH *
                                          SERVO_FREQUENCY * 2**16)
         elif command == 1:
-            # Maximum position.
-            self._state.duty_cycle = int(SERVO_MAXIMUM_PULSE_WIDTH *
-                                         SERVO_FREQUENCY * 2**16)
-        elif command == 2:
             # Center position.
             self._state.duty_cycle = int(
                 ((SERVO_MINIMUM_PULSE_WIDTH + SERVO_MAXIMUM_PULSE_WIDTH) / 2) *
                 SERVO_FREQUENCY * 2**16)
+        elif command == 2:
+            # Maximum position.
+            self._state.duty_cycle = int(SERVO_MAXIMUM_PULSE_WIDTH *
+                                         SERVO_FREQUENCY * 2**16)
         else:
             logger.info(f"Unknown command received: {command}")
 
