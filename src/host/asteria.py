@@ -89,8 +89,10 @@ class Asteria(QMainWindow):
 
         # Info.
         info_layout = QHBoxLayout()
-        connected_label = QLabel(f"Connected to ground station @ {self.ground[0]}:{self.ground[1]}")
-        connected_label.setStyleSheet("color: green; font-weight: bold; font-size: 10px;")
+        connected_label = QLabel(
+            f"Connected to ground station @ {self.ground[0]}:{self.ground[1]}")
+        connected_label.setStyleSheet(
+            "color: green; font-weight: bold; font-size: 10px;")
         info_layout.addWidget(connected_label)
         main_layout.addLayout(info_layout)
 
@@ -107,8 +109,8 @@ class Asteria(QMainWindow):
         self.temperature = random.randint(0, 100)
         self.proximity = random.randint(0, 30)
         self.orientation_label.setText(
-            "Orientation (q): ({:.3f}, {:.3f}, {:.3f}, {:.3f})".
-            format(*self.orientation))
+            "Orientation (q): ({:.3f}, {:.3f}, {:.3f}, {:.3f})".format(
+                *self.orientation))
         self.temperature_label.setText(f"Temperature (°C): {self.temperature}")
         self.proximity_label.setText(f"Proximity (m): {self.proximity}")
 

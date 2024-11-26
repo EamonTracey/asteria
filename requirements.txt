@@ -1,7 +1,9 @@
 adafruit-blinka
 adafruit-circuitpython-bno08x
+adafruit-circuitpython-framebuf
 adafruit-circuitpython-mcp9808
 adafruit-circuitpython-rfm9x
+adafruit-circuitpython-ssd1306
 click
 jupyterlab
 picamera

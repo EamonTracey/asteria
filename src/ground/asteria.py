@@ -1,4 +1,5 @@
 import adafruit_rfm9x
+import adafruit_ssd1306
 import board
 import busio
 import digitalio
@@ -13,8 +14,21 @@ class Asteria:
     def __init__(self, name, host: tuple[str, int], port: int):
         self._loop = Loop(1)
 
-        # Connect to the SPI bus.
+        # Connect to the I2C and SPI bus.
+        i2c = board.I2C()
         spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
+
+        # Display.
+        display = adafruit_ssd1306.SSD1306_I2C(128,
+                                               32,
+                                               i2c,
+                                               reset=digitalio.DigitalInOut(
+                                                   board.D4))
+        width, height = display.width, display.height
+        display.fill(0)
+        display.text("Asteria", 0, 0, 1)
+        display.text("Ground Station", 0, height // 2, 1)
+        display.show()
 
         # Initialize the RFM95W.
         cs = digitalio.DigitalInOut(board.CE1)
