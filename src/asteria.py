@@ -31,7 +31,7 @@ def air(name: Optional[str]):
 
     # Naming is hard.
     if name is None:
-        utc_date = datetime.datetime.now(datetime.UTC)
+        utc_date = datetime.datetime.now(datetime.timezone.utc)
         utc_date_string = utc_date.strftime("%Y%m%d%H%M%S")
         name = f"Asteria Air {utc_date_string}"
 
@@ -71,7 +71,7 @@ def ground(host: str, name: Optional[str], port: int, host_port: int):
 
     # Naming is hard.
     if name is None:
-        utc_date = datetime.datetime.now(datetime.UTC)
+        utc_date = datetime.datetime.now(datetime.timezone.utc)
         utc_date_string = utc_date.strftime("%Y%m%d%H%M%S")
         name = f"Asteria Ground {utc_date_string}"
 
@@ -113,7 +113,7 @@ def host(ground: str, name: Optional[str], port: int, ground_port: int):
 
     # Naming is hard.
     if name is None:
-        utc_date = datetime.datetime.now(datetime.UTC)
+        utc_date = datetime.datetime.now(datetime.timezone.utc)
         utc_date_string = utc_date.strftime("%Y%m%d%H%M%S")
         name = f"Asteria Host {utc_date_string}"
 

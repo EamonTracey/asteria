@@ -38,8 +38,6 @@ class ControlComponent(Component):
         return self._state
 
     def dispatch(self):
-        # TODO?: Implement controller.
-
         command = self._air_rfm95w_state.command
 
         if command == 0:

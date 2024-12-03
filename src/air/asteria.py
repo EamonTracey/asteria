@@ -6,6 +6,7 @@ import digitalio
 
 from base.loop import Loop
 from air.rfm95w import RFM95WComponent
+from air.rfm95w import RFM95WState
 from air.bno085 import BNO085Component
 from air.control import ControlComponent
 from air.lidar import LidarComponent
@@ -30,21 +31,24 @@ class Asteria:
         bno085_state = bno085_component.state
         self._loop.add_component(bno085_component, 1)
 
-        # RFM95W.
-        # TODO: determine RST pin, floating on board
-        rfm95w_component = RFM95WComponent(spi, board.CE0, board.D6)
-        rfm95w_state = rfm95w_component.state
-        self._loop.add_component(rfm95w_component, 1)
-
         # Lidar.
         lidar_component = LidarComponent(i2c)
         lidar_state = lidar_component.state
         self._loop.add_component(lidar_component, 1)
 
         # MCP9808.
-        mcp9808_component = MCP9808Component(i2c)
+        mcp9808_component = MCP9808Component(i2c, 0x1C)
         mcp9808_state = mcp9808_component.state
         self._loop.add_component(mcp9808_component, 1)
+
+        # RFM95W.
+        # TODO: determine RST pin, floating on board
+        #rfm95w_component = RFM95WComponent(spi, board.CE0, board.D14,
+        #                                   bno085_state, lidar_state,
+        #                                   mcp9808_state)
+        #rfm95w_state = rfm95w_component.state
+        #self._loop.add_component(rfm95w_component, 1)
+        rfm95w_state = RFM95WState()
 
         # Temperature Regulation.
         temperature_regulation_component = TemperatureRegulationComponent(

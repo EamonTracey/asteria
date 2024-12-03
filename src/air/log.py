@@ -40,9 +40,9 @@ class LogState:
 
 class LogComponent(Component):
 
-    def __init__(self, path: str, loop_state, LoopState,
+    def __init__(self, path: str, loop_state: LoopState,
                  bno085_state: BNO085State, lidar_state: LidarState,
-                 mcp9808_state, MCP9808State):
+                 mcp9808_state: MCP9808State):
         self._state = LogState()
 
         self._loop_state = loop_state
@@ -71,3 +71,4 @@ class LogComponent(Component):
             self._mcp9808_state.temperature_errors,
         ]
         self._writer.writerow(record)
+        self._file.flush()

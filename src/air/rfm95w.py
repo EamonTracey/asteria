@@ -26,7 +26,7 @@ class RFM95WComponent(Component):
 
     def __init__(self, spi: busio.SPI, cs: microcontroller.Pin,
                  rst: microcontroller.Pin, bno085_state: BNO085State,
-                 lidar_state, LidarState, mcp9808_state: MCP9808State):
+                 lidar_state: LidarState, mcp9808_state: MCP9808State):
         self._state = RFM95WState()
 
         self._bno085_state = bno085_state

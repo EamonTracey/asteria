@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 import logging
 import time
+import traceback
 
 import board
 import busio

@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import logging
+import traceback
 
 import adafruit_mcp9808
 import busio
@@ -24,7 +25,7 @@ class MCP9808Component(Component):
         self._state = MCP9808State()
 
         self._mcp9808 = adafruit_mcp9808.MCP9808(i2c, address=address)
-        self._mcp9808.resolution = 0
+        # self._mcp9808.resolution = 0
 
         logger.info("MCP9808 initialized.")
         logger.info(f"{self._mcp9808.upper_temperature=}")
