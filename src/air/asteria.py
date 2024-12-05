@@ -42,13 +42,11 @@ class Asteria:
         self._loop.add_component(mcp9808_component, 1)
 
         # RFM95W.
-        # TODO: determine RST pin, floating on board
-        #rfm95w_component = RFM95WComponent(spi, board.CE0, board.D14,
-        #                                   bno085_state, lidar_state,
-        #                                   mcp9808_state)
-        #rfm95w_state = rfm95w_component.state
-        #self._loop.add_component(rfm95w_component, 1)
-        rfm95w_state = RFM95WState()
+        rfm95w_component = RFM95WComponent(spi, board.CE1, board.D14,
+                                           bno085_state, lidar_state,
+                                           mcp9808_state)
+        rfm95w_state = rfm95w_component.state
+        self._loop.add_component(rfm95w_component, 1)
 
         # Temperature Regulation.
         temperature_regulation_component = TemperatureRegulationComponent(
