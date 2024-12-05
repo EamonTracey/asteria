@@ -53,7 +53,7 @@ class Asteria(QMainWindow):
         telemetry_label.setStyleSheet("font-weight: bold; font-size: 16px;")
         self.orientation_label = QLabel(f"Orientation (q): -", self)
         self.temperature_label = QLabel(f"Temperature (°C): -", self)
-        self.proximity_label = QLabel(f"Proximity (m): -", self)
+        self.proximity_label = QLabel(f"Proximity (cm): -", self)
         telemetry_layout.addWidget(telemetry_label)
         telemetry_layout.addWidget(self.orientation_label)
         telemetry_layout.addWidget(self.temperature_label)
@@ -116,8 +116,8 @@ class Asteria(QMainWindow):
         self.orientation_label.setText(
             "Orientation (q): ({:.3f}, {:.3f}, {:.3f}, {:.3f})".format(
                 *self.orientation))
-        self.temperature_label.setText(f"Temperature (°C): {self.temperature}")
-        self.proximity_label.setText(f"Proximity (m): {self.proximity}")
+        self.temperature_label.setText(f"Temperature (°C): {self.temperature:.3f}")
+        self.proximity_label.setText(f"Proximity (cm): {self.proximity:.3f}")
 
     def run(self):
         self.show()
