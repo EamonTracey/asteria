@@ -17,7 +17,7 @@ def main():
     print("ALL INITIALIZED.")
 
     while True:
-        message = self._rfm95w.receive(timeout=0)
+        message = rfm95w.receive(timeout=0)
         if message is not None:
             print(message.decode())
 
