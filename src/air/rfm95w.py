@@ -65,12 +65,12 @@ class RFM95WComponent(Component):
         for element in quaternion:
             quaternion_serialized += float_to_fixed_bytes(element, 0, 1.01)
         proximity = self._lidar_state.proximity
-        proximity_serialized = float_to_fixed_bytes(proximity, 0, 10.01)
+        proximity_serialized = float_to_fixed_bytes(proximity, 0, 1000.01)
         temperature = self._mcp9808_state.temperature
         temperature_serialized = float_to_fixed_bytes(temperature, -100, 100)
         telemetry_serialized = quaternion_serialized + proximity_serialized + temperature_serialized
         #logger.info(f"Sending {telemetry_serialized=}")
-        #self._rfm95w.send(telemetry_serialized)
+        self._rfm95w.send(telemetry_serialized)
 
     def _handle_message(self, message: bytearray):
         logger.info(f"Received {message=}")

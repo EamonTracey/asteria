@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class LidarState:
-    # Proximity to some nearby object in meters.
+    # Proximity to some nearby object in centimeters.
     proximity: int = 0
 
     # Count the number of times each reading fails.
