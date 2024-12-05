@@ -38,11 +38,11 @@ class RFM95WComponent(Component):
         self._rfm95w = adafruit_rfm9x.RFM9x(spi, cs, rst, 915)
 
         logger.info("RFM95W initialized.")
-        logger.info("{self._rfm95w.frequency_mhz=}")
-        logger.info("{self._rfm95w.signal_bandwidth=}")
-        logger.info("{self._rfm95w.spreading_factor=}")
-        logger.info("{self._rfm95w.tx_power=}")
-        logger.info("{self._rfm95w.xmit_timeout=}")
+        logger.info(f"{self._rfm95w.frequency_mhz=}")
+        logger.info(f"{self._rfm95w.signal_bandwidth=}")
+        logger.info(f"{self._rfm95w.spreading_factor=}")
+        logger.info(f"{self._rfm95w.tx_power=}")
+        logger.info(f"{self._rfm95w.xmit_timeout=}")
 
     @property
     def state(self):

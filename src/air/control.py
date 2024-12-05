@@ -43,16 +43,18 @@ class ControlComponent(Component):
 
         logger.info("Servo motor PWM signals initialized.")
         logger.info(
-            "{SERVO_FREQUENCY=} {SERVO_MINIMUM_PULSE_WIDTH=} {SERVO_MAXIMUM_PULSE_WIDTH=}"
+            f"{SERVO_FREQUENCY=} {SERVO_MINIMUM_PULSE_WIDTH=} {SERVO_MAXIMUM_PULSE_WIDTH=}"
         )
-        logger.info("{self._body_pwm=}")
-        logger.info("{self._leg_pwm=}")
+        logger.info(f"{self._body_pwm=}")
+        logger.info(f"{self._leg_pwm=}")
 
     @property
     def state(self):
         return self._state
 
     def dispatch(self):
+        stage = self._stage_state.stage
+
         # body rotation
         if stage == 0 or stage == 1:
             command = self._air_rfm95w_state.command

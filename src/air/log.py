@@ -6,7 +6,7 @@ from base.loop import LoopState
 from air.bno085 import BNO085State
 from air.lidar import LidarState
 from air.mcp9808 import MCP9808State
-from air.stage_state import StageState
+from air.stage import StageState
 
 HEADERS = [
     "Time", "Loop_Slip_Count", "Acceleration_X_BNO085",
@@ -57,7 +57,7 @@ class LogComponent(Component):
             self._bno085_state.gyro_errors,
             self._lidar_state.proximity_errors,
             self._mcp9808_state.temperature_errors,
-            self._stage_state.state,
+            self._stage_state.stage,
         ]
         self._writer.writerow(record)
         self._file.flush()

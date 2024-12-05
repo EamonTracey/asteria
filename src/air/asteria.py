@@ -13,6 +13,8 @@ from air.lidar import LidarComponent
 from air.log import LogComponent
 from air.mcp9808 import MCP9808Component
 from air.temperature_regulation import TemperatureRegulationComponent
+from air.stage import StageComponent
+from air.camera import CameraComponent
 
 
 class Asteria:
@@ -54,9 +56,9 @@ class Asteria:
         self._loop.add_component(temperature_regulation_component, 10)
 
         # Stage.
-        stage_component = StageComponent(loop_state, lidar_State)
+        stage_component = StageComponent(loop_state, lidar_state)
         stage_state = stage_component.state
-        self._loop.add_component(stage_state, 10)
+        self._loop.add_component(stage_component, 10)
 
         # Control.
         control_component = ControlComponent(board.D12, board.D13,
@@ -65,8 +67,8 @@ class Asteria:
         self._loop.add_component(control_component, 10)
 
         # Camera.
-        camera_component = CameraComponent()
-        self._loop.add_component(camera_component, 1)
+        #camera_component = CameraComponent()
+        #self._loop.add_component(camera_component, 1)
 
         # Log
         log_component = LogComponent(f"{name}.csv", loop_state, bno085_state,
