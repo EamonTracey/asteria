@@ -55,14 +55,19 @@ class Asteria:
             mcp9808_state)
         self._loop.add_component(temperature_regulation_component, 1)
 
+        # Stage.
+        stage_component = StageComponent(loop_state, lidar_State)
+        stage_state = stage_component.state
+
         # Control.
-        control_component = ControlComponent(board.D13, bno085_state,
-                                             rfm95w_state)
+        control_component = ControlComponent(board.D12, board.D13,
+                                             bno085_state, rfm95w_state,
+                                             stage_state)
         self._loop.add_component(control_component, 1)
 
         # Log
         log_component = LogComponent(f"{name}.csv", loop_state, bno085_state,
-                                     lidar_state, mcp9808_state)
+                                     lidar_state, mcp9808_state, stage_state)
         self._loop.add_component(log_component, 1)
 
     def run(self, steps: int):
