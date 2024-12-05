@@ -19,7 +19,7 @@ def main():
     while True:
         message = rfm95w.receive(timeout=0)
         if message is not None:
-            print(message.decode())
+            print(message)
 
         time.sleep(1)
 

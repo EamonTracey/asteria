@@ -69,10 +69,10 @@ class RFM95WComponent(Component):
         temperature = self._mcp9808_state.temperature
         temperature_serialized = float_to_fixed_bytes(temperature, -100, 100)
         telemetry_serialized = quaternion_serialized + proximity_serialized + temperature_serialized
-        logger.info(f"Sending {telemetry_serialized=}")
-        self._rfm95w.send(telemetry_serialized)
+        #logger.info(f"Sending {telemetry_serialized=}")
+        #self._rfm95w.send(telemetry_serialized)
 
     def _handle_message(self, message: bytearray):
         logger.info(f"Received {message=}")
-        command = int.from_bytes(command, byteorder="big")
+        command = int.from_bytes(bytes(message), byteorder="big")
         self._state.command = command

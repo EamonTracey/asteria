@@ -10,8 +10,8 @@ from air.rfm95w import RFM95WState
 from air.stage import StageState
 
 SERVO_FREQUENCY = 50
-SERVO_MINIMUM_PULSE_WIDTH = 0.001
-SERVO_MAXIMUM_PULSE_WIDTH = 0.002
+SERVO_MINIMUM_PULSE_WIDTH = 0.00035
+SERVO_MAXIMUM_PULSE_WIDTH = 0.00265
 
 logger = logging.getLogger(__name__)
 
