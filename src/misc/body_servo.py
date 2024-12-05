@@ -14,25 +14,26 @@ duty_cycle_maximum = int(SERVO_MAXIMUM_PULSE_WIDTH * SERVO_FREQUENCY * 2**16)
 # Create a PWMOut object on GPIO12
 pwm = pwmio.PWMOut(board.D12, frequency=SERVO_FREQUENCY)
 
+
 def set_angle(angle):
     """Set the servo to a specific angle (0 to 180)."""
     if angle < 0 or angle > 180:
         print("Error: Angle out of range (0-180°)")
         return
     duty_cycle = int(
-        (SERVO_MINIMUM_PULSE_WIDTH +
-         (angle / 180) * (SERVO_MAXIMUM_PULSE_WIDTH - SERVO_MINIMUM_PULSE_WIDTH))
-        * SERVO_FREQUENCY * 2**16
-    )
+        (SERVO_MINIMUM_PULSE_WIDTH + (angle / 180) *
+         (SERVO_MAXIMUM_PULSE_WIDTH - SERVO_MINIMUM_PULSE_WIDTH)) *
+        SERVO_FREQUENCY * 2**16)
     print(f"Setting angle to {angle}°, Duty Cycle: {duty_cycle}")
     pwm.duty_cycle = duty_cycle
     time.sleep(0.5)  # Allow servo to reach position
+
 
 try:
     while True:
         # Test full range
         print("Testing full range...")
-        set_angle(0)    # Move to 0°
+        set_angle(0)  # Move to 0°
         time.sleep(2)
         set_angle(180)  # Move to 180°
         time.sleep(2)

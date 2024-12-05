@@ -14,7 +14,7 @@ try:
         print("Turning on")
         GPIO.output(GPIO_PIN, GPIO.HIGH)  # Turn on
         time.sleep(5)  # Wait for 5 second
-        GPIO.output(GPIO_PIN, GPIO.LOW)   # Turn off
+        GPIO.output(GPIO_PIN, GPIO.LOW)  # Turn off
         # off for 1
         print("Turning off")
         time.sleep(1)  # Wait for 1 second

@@ -8,11 +8,11 @@ try:
     while True:
         print("GPIO 27 HIGH")
         gpio_pin.on()  # Turn the pin HIGH
-        sleep(10)       # Wait for 1 second
+        sleep(10)  # Wait for 1 second
 
         print("GPIO 27 LOW")
         gpio_pin.off()  # Turn the pin LOW
-        sleep(1)        # Wait for 1 second
+        sleep(1)  # Wait for 1 second
 
 except KeyboardInterrupt:
     print("\nExiting program...")

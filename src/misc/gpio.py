@@ -13,4 +13,3 @@ time.sleep(60)  # Keeps the pin on for 10 seconds
 
 # Clean up GPIO setup (best practice)
 GPIO.cleanup()
-

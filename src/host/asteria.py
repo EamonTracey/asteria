@@ -14,6 +14,8 @@ logger = logging.getLogger(__name__)
 
 from pyqtgraph.opengl import GLBoxItem
 
+from base.math import fixed_bytes_to_float
+
 
 class Asteria(QMainWindow):
 
@@ -104,10 +106,13 @@ class Asteria(QMainWindow):
         logger.info(f"Sent {command=} to ground.")
 
     def update_telemetry(self, telemetry: bytes):
-        import random
-        self.orientation = tuple(random.random() for _ in range(4))
-        self.temperature = random.randint(0, 100)
-        self.proximity = random.randint(0, 30)
+        telemetry = telemetry[0]
+        self.orientation = (fixed_bytes_to_float(telemetry[0:4], 0, 1.01),
+                            fixed_bytes_to_float(telemetry[4:8], 0, 1.01),
+                            fixed_bytes_to_float(telemetry[8:12], 0, 1.01),
+                            fixed_bytes_to_float(telemetry[12:16], 0, 1.01))
+        self.proximity = fixed_bytes_to_float(telemetry[16:20], 0, 10.01)
+        self.temperature = fixed_bytes_to_float(telemetry[20:24], -100, 100)
         self.orientation_label.setText(
             "Orientation (q): ({:.3f}, {:.3f}, {:.3f}, {:.3f})".format(
                 *self.orientation))
@@ -129,7 +134,5 @@ class TelemetryThread(QThread):
 
     def run(self):
         while True:
-            # telemetry, _ = self._socket.recvfrom(4096)
-            telemetry = b""
-            time.sleep(0.5)
+            telemetry, _ = self._socket.recvfrom(4096)
             self.update_telemetry.emit((telemetry, ))

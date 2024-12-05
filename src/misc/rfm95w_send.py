@@ -5,6 +5,7 @@ import board
 import busio
 import digitalio
 
+
 def main():
     # Send.
     spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)

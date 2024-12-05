@@ -6,7 +6,6 @@ import busio
 import digitalio
 
 
-
 def main():
     # Receive.
     spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
@@ -22,6 +21,7 @@ def main():
             print(message)
 
         time.sleep(1)
+
 
 if __name__ == "__main__":
     main()
