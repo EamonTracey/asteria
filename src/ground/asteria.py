@@ -12,7 +12,7 @@ from ground.proxy import ProxyComponent
 class Asteria:
 
     def __init__(self, name, host: tuple[str, int], port: int):
-        self._loop = Loop(1)
+        self._loop = Loop(10)
 
         # Connect to the I2C and SPI bus.
         i2c = board.I2C()
@@ -37,12 +37,12 @@ class Asteria:
 
         # Proxy.
         proxy_component = ProxyComponent(host, port, rfm95w)
-        self._loop.add_component(proxy_component, 1)
+        self._loop.add_component(proxy_component, 10)
 
         # Buttons.
         buttons_component = ButtonsComponent(rfm95w, board.D5, board.D6,
                                              board.D12)
-        self._loop.add_component(buttons_component, 1)
+        self._loop.add_component(buttons_component, 10)
 
     def run(self, steps: int):
         self._loop.run(steps)
