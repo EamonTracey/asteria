@@ -8,8 +8,6 @@ import digitalio
 
 
 def main():
-    loop = Loop(1)
-
     # Receive.
     spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
     cs = digitalio.DigitalInOut(board.CE1)
@@ -17,6 +15,7 @@ def main():
     rfm95w = adafruit_rfm9x.RFM9x(spi, cs, rst, 915)
 
     print("ALL INITIALIZED.")
+
     while True:
         message = self._rfm95w.receive(timeout=0)
         if message is not None:

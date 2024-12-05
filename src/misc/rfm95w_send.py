@@ -17,7 +17,9 @@ def main():
     count = 0
     while True:
         count += 1
-        self._rfm95w.send(f"Hello, Asteria! {count}".encode())
+        message = f"{count} Hello, Asteria!".encode()
+        self._rfm95w.send(message)
+        print(message)
 
 
 if __name__ == "__main__":
