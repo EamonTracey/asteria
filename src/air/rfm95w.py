@@ -70,7 +70,7 @@ class RFM95WComponent(Component):
         temperature_serialized = float_to_fixed_bytes(temperature, -100, 100)
         telemetry_serialized = quaternion_serialized + proximity_serialized + temperature_serialized
         #logger.info(f"Sending {telemetry_serialized=}")
-        self._rfm95w.send(telemetry_serialized)
+        #self._rfm95w.send(telemetry_serialized)
 
     def _handle_message(self, message: bytearray):
         logger.info(f"Received {message=}")
