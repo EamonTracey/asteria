@@ -111,7 +111,7 @@ class Asteria(QMainWindow):
                             fixed_bytes_to_float(telemetry[4:8], 0, 1.01),
                             fixed_bytes_to_float(telemetry[8:12], 0, 1.01),
                             fixed_bytes_to_float(telemetry[12:16], 0, 1.01))
-        self.proximity = fixed_bytes_to_float(telemetry[16:20], 0, 10.01)
+        self.proximity = fixed_bytes_to_float(telemetry[16:20], 0, 1000.01)
         self.temperature = fixed_bytes_to_float(telemetry[20:24], -100, 100)
         self.orientation_label.setText(
             "Orientation (q): ({:.3f}, {:.3f}, {:.3f}, {:.3f})".format(
