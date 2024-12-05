@@ -23,8 +23,8 @@ def main():
 
     # Receive.
     spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
-    cs = digitalio.DigitalInOut(board.D5)
-    rst = digitalio.DigitalInOut(board.D6)
+    cs = digitalio.DigitalInOut(board.CE1)
+    rst = digitalio.DigitalInOut(board.D14)
     rfm95w = adafruit_rfm9x.RFM9x(spi, cs, rst, 915)
     receive_component = ReceiveComponent(rfm95w)
     loop.add_component(receive_component, 1)

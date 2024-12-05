@@ -24,8 +24,8 @@ def main():
 
     # Send.
     spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
-    cs = digitalio.DigitalInOut(board.D5)
-    rst = digitalio.DigitalInOut(board.D6)
+    cs = digitalio.DigitalInOut(board.CE1)
+    rst = digitalio.DigitalInOut(board.D14)
     rfm95w = adafruit_rfm9x.RFM9x(spi, cs, rst, 915)
     send_component = SendComponent(rfm95w)
     loop.add_component(send_component, 1)
