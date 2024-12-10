@@ -24,7 +24,7 @@ class CameraComponent(Component):
         self._period = period
         self._loop_state = loop_state
 
-        self._camera = PiCamera()
+        self._camera = PiCamera(resolution=(1280, 720))
         logger.info("Camera initialized.")
 
     @property
