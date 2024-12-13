@@ -61,7 +61,7 @@ class Asteria:
         self._loop.add_component(stage_component, 10)
 
         # Control.
-        control_component = ControlComponent(board.D13, board.D12,
+        control_component = ControlComponent(board.D12, board.D13,
                                              bno085_state, rfm95w_state,
                                              stage_state)
         self._loop.add_component(control_component, 10)

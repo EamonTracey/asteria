@@ -40,6 +40,8 @@ class StageComponent(Component):
     def dispatch(self):
         stage = self._state.stage
 
+        logger.info(f"{self._state.stage=}")
+
         if stage == 0:
             if self._state.zero_to_one_transition_time is None:
                 if self._lidar_state.proximity >= ZERO_TO_ONE_TRANSITION_PROXIMITY:

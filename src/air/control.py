@@ -13,6 +13,10 @@ SERVO_FREQUENCY = 50
 SERVO_MINIMUM_PULSE_WIDTH = 0.00075
 SERVO_MAXIMUM_PULSE_WIDTH = 0.0024
 
+SERVO_FREQUENCY = 333  # Operating frequency for LW-20MG (333 Hz)
+SERVO_MINIMUM_PULSE_WIDTH = 0.0005  # Further expanded minimum pulse width (0.6 ms)
+SERVO_MAXIMUM_PULSE_WIDTH = 0.0028  # Further expanded maximum pulse width (2.4 ms)
+
 logger = logging.getLogger(__name__)
 
 
