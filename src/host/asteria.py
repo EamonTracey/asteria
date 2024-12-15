@@ -193,7 +193,8 @@ class Asteria(QMainWindow):
                             fixed_bytes_to_float(telemetry[8:12], 0.0, 1.0),
                             fixed_bytes_to_float(telemetry[12:16], 0.0, 1.0))
         self.proximity = fixed_bytes_to_float(telemetry[16:20], 0.0, 1000.0)
-        self.temperature = fixed_bytes_to_float(telemetry[20:24], -100.0, 100.0)
+        self.temperature = fixed_bytes_to_float(telemetry[20:24], -100.0,
+                                                100.0)
 
         # Update the telemetry labels.
         self.proximity *= 0.0328084

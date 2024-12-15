@@ -81,6 +81,7 @@ class RFM95WComponent(Component):
         proximity = self._lidar_state.proximity
         proximity_serialized = float_to_fixed_bytes(proximity, 0, 1000.0)
         temperature = self._mcp9808_state.temperature
-        temperature_serialized = float_to_fixed_bytes(temperature, -100.0, 100.0)
+        temperature_serialized = float_to_fixed_bytes(temperature, -100.0,
+                                                      100.0)
         telemetry_serialized = quaternion_serialized + proximity_serialized + temperature_serialized
         return telemetry_serialized
