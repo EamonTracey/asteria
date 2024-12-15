@@ -6,10 +6,12 @@ adafruit-circuitpython-rfm9x
 adafruit-circuitpython-ssd1306
 click
 jupyterlab
+numpy-stl
 picamera
 PyQt5
 pyqtgraph
 pythreejs
 RPi.GPIO
 trimesh
+vtk
 yapf

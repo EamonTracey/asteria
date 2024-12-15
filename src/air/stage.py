@@ -8,8 +8,9 @@ from base.loop import LoopState
 
 logger = logging.getLogger(__name__)
 
-ZERO_TO_ONE_TRANSITION_TIME = 1 # Seconds.
-ONE_TO_TWO_TRANSITION_TIME = 1 # Seconds.
+ZERO_TO_ONE_TRANSITION_TIME = 1  # Seconds.
+ONE_TO_TWO_TRANSITION_TIME = 1  # Seconds.
+
 
 @dataclass
 class StageState:

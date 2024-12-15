@@ -26,12 +26,11 @@ def asteria():
     type=str,
     default=None,
     help="The name of the program instance (corresponds to log file).")
-@click.option(
-    "-d",
-    "--directory",
-    type=str,
-    default=".",
-    help="The working directory of the application.")
+@click.option("-d",
+              "--directory",
+              type=str,
+              default=".",
+              help="The working directory of the application.")
 @click.option(
     "-p",
     "--proximity",

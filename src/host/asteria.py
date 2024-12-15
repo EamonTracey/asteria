@@ -9,12 +9,63 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QLabel, QPushButton,
                              QSizePolicy)
 from PyQt5.QtCore import QTimer, QThread, pyqtSignal
 from pyqtgraph.opengl import GLViewWidget, MeshData, GLMeshItem
-
-logger = logging.getLogger(__name__)
-
+from stl import mesh
+import vtk
+from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from pyqtgraph.opengl import GLBoxItem
 
 from base.math import fixed_bytes_to_float
+
+logger = logging.getLogger(__name__)
+
+
+class VisualizationWindow(QWidget):
+
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Asteria Visualization")
+
+        self.vtkWidget = QVTKRenderWindowInteractor(self)
+        layout = QVBoxLayout()
+        layout.addWidget(self.vtkWidget)
+        self.setLayout(layout)
+        self.vtkWidget.GetRenderWindow().AddRenderer(vtk.vtkRenderer())
+        self.vtkWidget.GetRenderWindow().GetRenderers().GetFirstRenderer(
+        ).SetBackground(0.1, 0.1, 0.1)
+        self.vtkWidget.GetRenderWindow().GetInteractor().Initialize()
+        self.vtkWidget.GetRenderWindow().GetInteractor().Start()
+        self.load_stl("cad/Asteria_Outside_Body.stl")
+
+    def load_stl(self, file_path):
+        stl_mesh = mesh.Mesh.from_file(file_path)
+        points = vtk.vtkPoints()
+        cells = vtk.vtkCellArray()
+        for triangle in stl_mesh.vectors:
+            ids = []
+            for vertex in triangle:
+                point_id = points.InsertNextPoint(vertex)
+                ids.append(point_id)
+            cells.InsertNextCell(3, ids)
+
+        poly_data = vtk.vtkPolyData()
+        poly_data.SetPoints(points)
+        poly_data.SetPolys(cells)
+        mapper = vtk.vtkPolyDataMapper()
+        mapper.SetInputData(poly_data)
+        actor = vtk.vtkActor()
+        actor.SetMapper(mapper)
+        renderer = self.vtkWidget.GetRenderWindow().GetRenderers(
+        ).GetFirstRenderer()
+        renderer.AddActor(actor)
+        renderer.ResetCamera()
+        self.vtkWidget.GetRenderWindow().Render()
+
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = STLViewer()
+    window.show()
+    sys.exit(app.exec_())
 
 
 class Asteria(QMainWindow):
@@ -84,6 +135,9 @@ class Asteria(QMainWindow):
         visualization_label.setStyleSheet(
             "font-weight: bold; font-size: 16px;")
         visualization_layout.addWidget(visualization_label)
+        open_button = QPushButton("Open Visualization", self)
+        open_button.clicked.connect(self.open_visualization_window)
+        visualization_layout.addWidget(open_button)
         main_layout.addLayout(visualization_layout)
 
         main_layout.addItem(
@@ -101,20 +155,24 @@ class Asteria(QMainWindow):
         # Finalize.
         self.setCentralWidget(central_widget)
 
+    def open_visualization_window(self):
+        self.visualization_window = VisualizationWindow()
+        self.visualization_window.show()
+
     def send_command(self, command: bytes):
         self.socket.sendto(command, self.ground)
         logger.info(f"Sent {command=} to ground.")
 
     def update_telemetry(self, telemetry: bytes):
         telemetry = telemetry[0]
-        self.orientation = (fixed_bytes_to_float(telemetry[0:4], 0, 1.01),
-                            fixed_bytes_to_float(telemetry[4:8], 0, 1.01),
-                            fixed_bytes_to_float(telemetry[8:12], 0, 1.01),
-                            fixed_bytes_to_float(telemetry[12:16], 0, 1.01))
-        self.proximity = fixed_bytes_to_float(telemetry[16:20], 0, 1000.01)
+        self.orientation = (fixed_bytes_to_float(telemetry[0:4], 0.0, 1.00),
+                            fixed_bytes_to_float(telemetry[4:8], 0.0, 1.00),
+                            fixed_bytes_to_float(telemetry[8:12], 0.0, 1.00),
+                            fixed_bytes_to_float(telemetry[12:16], 0.0, 1.00))
+        self.proximity = fixed_bytes_to_float(telemetry[16:20], 0.0, 1000.0)
         self.temperature = fixed_bytes_to_float(telemetry[20:24], -100, 100)
         self.proximity *= 0.0328084
-        self.temperature = (self.temperature - 32) * 5 / 9
+        self.temperature = self.temperature * 9 / 5 + 32
         self.orientation_label.setText(
             "Orientation (q): ({:.3f}, {:.3f}, {:.3f}, {:.3f})".format(
                 *self.orientation))
