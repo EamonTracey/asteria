@@ -1,4 +1,5 @@
 import logging
+import math
 import socket
 import sys
 import time
@@ -19,6 +20,19 @@ from base.math import fixed_bytes_to_float
 logger = logging.getLogger(__name__)
 
 
+def quaternion_to_euler(w, x, y, z):
+    sinr_cosp = 2 * (w * x + y * z)
+    cosr_cosp = 1 - 2 * (x * x + y * y)
+    roll = math.atan2(sinr_cosp, cosr_cosp)
+    sinp = 2 * (w * y - z * x)
+    pitch = math.asin(sinp) if abs(sinp) <= 1 else math.copysign(
+        math.pi / 2, sinp)
+    siny_cosp = 2 * (w * z + x * y)
+    cosy_cosp = 1 - 2 * (y * y + z * z)
+    yaw = math.atan2(siny_cosp, cosy_cosp)
+    return roll, pitch, yaw
+
+
 class VisualizationWindow(QWidget):
 
     def __init__(self):
@@ -36,6 +50,8 @@ class VisualizationWindow(QWidget):
         self.vtkWidget.GetRenderWindow().GetInteractor().Start()
         self.load_stl("cad/Asteria_Outside_Body.stl")
 
+        self.set_orientation((0.707, 0.707, 0, 0))
+
     def load_stl(self, file_path):
         stl_mesh = mesh.Mesh.from_file(file_path)
         points = vtk.vtkPoints()
@@ -52,20 +68,24 @@ class VisualizationWindow(QWidget):
         poly_data.SetPolys(cells)
         mapper = vtk.vtkPolyDataMapper()
         mapper.SetInputData(poly_data)
-        actor = vtk.vtkActor()
-        actor.SetMapper(mapper)
+        self.actor = vtk.vtkActor()
+        self.actor.SetMapper(mapper)
         renderer = self.vtkWidget.GetRenderWindow().GetRenderers(
         ).GetFirstRenderer()
-        renderer.AddActor(actor)
+        renderer.AddActor(self.actor)
         renderer.ResetCamera()
         self.vtkWidget.GetRenderWindow().Render()
 
+    def set_orientation(self, quaternion: tuple[float, float, float, float]):
+        roll, pitch, yaw = quaternion_to_euler(*quaternion)
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = STLViewer()
-    window.show()
-    sys.exit(app.exec_())
+        transform = vtk.vtkTransform()
+        transform.RotateX(math.degrees(roll))
+        transform.RotateY(math.degrees(pitch))
+        transform.RotateZ(math.degrees(yaw))
+
+        self.actor.SetUserTransform(transform)
+        self.vtkWidget.GetRenderWindow().Render()
 
 
 class Asteria(QMainWindow):
@@ -163,8 +183,9 @@ class Asteria(QMainWindow):
         self.socket.sendto(command, self.ground)
         logger.info(f"Sent {command=} to ground.")
 
-    def update_telemetry(self, telemetry: bytes):
-        telemetry = telemetry[0]
+    def update_telemetry(self, args: tuple[bytes]):
+        # Update the telemetry labels.
+        telemetry = args[0]
         self.orientation = (fixed_bytes_to_float(telemetry[0:4], 0.0, 1.00),
                             fixed_bytes_to_float(telemetry[4:8], 0.0, 1.00),
                             fixed_bytes_to_float(telemetry[8:12], 0.0, 1.00),
@@ -179,6 +200,10 @@ class Asteria(QMainWindow):
         self.temperature_label.setText(
             f"Temperature (°F): {self.temperature:.3f}")
         self.proximity_label.setText(f"Proximity (ft): {self.proximity:.3f}")
+
+        # Update the visualizer.
+        if hasattr(self, "visualization_window"):
+            self.visualization_window.set_orientation((self.orientation, ))
 
     def run(self):
         self.show()
