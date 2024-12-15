@@ -13,14 +13,13 @@ logger = logging.getLogger(__name__)
 class CameraState:
     photos: int = 0
 
-    last_photo_time: int = 0
-
 
 class CameraComponent(Component):
 
-    def __init__(self, period: float, loop_state: LoopState):
+    def __init__(self, period: int, loop_state: LoopState):
         self._state = CameraState()
 
+        self._counter = 0
         self._period = period
         self._loop_state = loop_state
 
@@ -32,15 +31,14 @@ class CameraComponent(Component):
         return self._state
 
     def dispatch(self):
-        if (loop_state.time - self._state.last_photo_time) < self._period:
-            continue
-        self._state.last_photo_time = loop_state.time
+        if self._counter % self._period == 0:
+            try:
+                path = f"photo_{photos}.jpg"
+                self.camera.capture(path)
+                self._state.photos += 1
+            except Exception as exception:
+                logger.exception(
+                    f"Exception when taking picamera photo: {traceback.format_exc()}"
+                )
 
-        try:
-            path = f"photo_{photos}.jpg"
-            self.camera.capture(path)
-            self._state.photos += 1
-        except Exception as exception:
-            logger.exception(
-                f"Exception when taking picamera photo: {traceback.format_exc()}"
-            )
+        self._counter += 1

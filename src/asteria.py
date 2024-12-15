@@ -18,14 +18,20 @@ def asteria():
     Authors: Sarah Kopfer, Nicholas Palma, Eamon Tracey"""
 
 
-@asteria.command()
+@asteria.command(context_settings={'show_default': True})
 @click.option(
     "-n",
     "--name",
     type=str,
     default=None,
     help="The name of the program instance (corresponds to log file).")
-def air(name: Optional[str]):
+@click.option(
+    "-p",
+    "--proximity",
+    type=float,
+    default=50,
+    help="The proximity from the ground at which flight 'begins' (ft).")
+def air(name: Optional[str], proximity: int):
     """Run Asteria flight software."""
     from air.asteria import Asteria as AirAsteria
 
@@ -45,11 +51,11 @@ def air(name: Optional[str]):
     logger.info("Developed by Sarah Kopfer, Nicholas Palma, and Eamon Tracey.")
     logger.info(f"{name=}")
 
-    air_asteria = AirAsteria(name)
+    air_asteria = AirAsteria(name, proximity)
     air_asteria.run(0)
 
 
-@asteria.command()
+@asteria.command(context_settings={'show_default': True})
 @click.argument("host", type=str)
 @click.option(
     "-n",
@@ -90,7 +96,7 @@ def ground(host: str, name: Optional[str], port: int, host_port: int):
     ground_asteria.run(0)
 
 
-@asteria.command()
+@asteria.command(context_settings={'show_default': True})
 @click.argument("ground", type=str)
 @click.option(
     "-n",

@@ -19,7 +19,7 @@ from air.camera import CameraComponent
 
 class Asteria:
 
-    def __init__(self, name: str):
+    def __init__(self, name: str, proximity: int):
         # Loop!
         self._loop = Loop(10)
         loop_state = self._loop.state
@@ -48,7 +48,7 @@ class Asteria:
                                            bno085_state, lidar_state,
                                            mcp9808_state)
         rfm95w_state = rfm95w_component.state
-        self._loop.add_component(rfm95w_component, 2)
+        self._loop.add_component(rfm95w_component, 5)
 
         # Temperature Regulation.
         temperature_regulation_component = TemperatureRegulationComponent(
@@ -56,7 +56,7 @@ class Asteria:
         self._loop.add_component(temperature_regulation_component, 10)
 
         # Stage.
-        stage_component = StageComponent(loop_state, lidar_state)
+        stage_component = StageComponent(proximity, loop_state, lidar_state)
         stage_state = stage_component.state
         self._loop.add_component(stage_component, 10)
 

@@ -116,7 +116,8 @@ class Asteria(QMainWindow):
         self.orientation_label.setText(
             "Orientation (q): ({:.3f}, {:.3f}, {:.3f}, {:.3f})".format(
                 *self.orientation))
-        self.temperature_label.setText(f"Temperature (°C): {self.temperature:.3f}")
+        self.temperature_label.setText(
+            f"Temperature (°C): {self.temperature:.3f}")
         self.proximity_label.setText(f"Proximity (cm): {self.proximity:.3f}")
 
     def run(self):
