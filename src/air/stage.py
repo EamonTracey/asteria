@@ -8,9 +8,8 @@ from base.loop import LoopState
 
 logger = logging.getLogger(__name__)
 
-ZERO_TO_ONE_TRANSITION_TIME = 5  # s
-ONE_TO_TWO_TRANSITION_TIME = 3  # s
-
+ZERO_TO_ONE_TRANSITION_TIME = 1 # Seconds.
+ONE_TO_TWO_TRANSITION_TIME = 1 # Seconds.
 
 @dataclass
 class StageState:
@@ -29,7 +28,7 @@ class StageComponent(Component):
                  lidar_state: LidarState):
         self._state = StageState()
 
-        self._critical_proximity = critical_proximity
+        self._critical_proximity = critical_proximity * 30.48
         self._loop_state = loop_state
         self._lidar_state = lidar_state
 
