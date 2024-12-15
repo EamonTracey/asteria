@@ -1,5 +1,6 @@
 import datetime
 import logging
+import os
 import sys
 from typing import Optional
 
@@ -26,14 +27,23 @@ def asteria():
     default=None,
     help="The name of the program instance (corresponds to log file).")
 @click.option(
+    "-d",
+    "--directory",
+    type=str,
+    default=".",
+    help="The working directory of the application.")
+@click.option(
     "-p",
     "--proximity",
     type=float,
     default=50,
     help="The proximity from the ground at which flight 'begins' (ft).")
-def air(name: Optional[str], proximity: int):
+def air(name: Optional[str], proximity: int, directory: str):
     """Run Asteria flight software."""
     from air.asteria import Asteria as AirAsteria
+
+    os.makedirs(directory, exist_ok=True)
+    os.chdir(directory)
 
     # Naming is hard.
     if name is None:

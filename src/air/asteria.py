@@ -67,7 +67,7 @@ class Asteria:
         self._loop.add_component(control_component, 10)
 
         # Camera.
-        camera_component = CameraComponent(3, loop_state)
+        camera_component = CameraComponent(5, loop_state)
         self._loop.add_component(camera_component, 1)
 
         # Log

@@ -33,8 +33,9 @@ class CameraComponent(Component):
     def dispatch(self):
         if self._counter % self._period == 0:
             try:
-                path = f"photo_{photos}.jpg"
-                self.camera.capture(path)
+                path = f"photo_{self._state.photos}.jpg"
+                self._camera.capture(path)
+                logger.info(f"Captured photo {self._state.photos}.")
                 self._state.photos += 1
             except Exception as exception:
                 logger.exception(
