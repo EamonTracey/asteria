@@ -28,6 +28,7 @@ class RFM95WComponent(Component):
                  rst: microcontroller.Pin, bno085_state: BNO085State,
                  lidar_state: LidarState, mcp9808_state: MCP9808State):
         self._state = RFM95WState()
+        self._counter = 0
 
         self._bno085_state = bno085_state
         self._lidar_state = lidar_state

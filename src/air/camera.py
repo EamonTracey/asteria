@@ -18,8 +18,8 @@ class CameraComponent(Component):
 
     def __init__(self, period: int, loop_state: LoopState):
         self._state = CameraState()
-
         self._counter = 0
+
         self._period = period
         self._loop_state = loop_state
 
