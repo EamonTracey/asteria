@@ -48,9 +48,7 @@ class VisualizationWindow(QWidget):
         ).SetBackground(0.1, 0.1, 0.1)
         self.vtkWidget.GetRenderWindow().GetInteractor().Initialize()
         self.vtkWidget.GetRenderWindow().GetInteractor().Start()
-        self.load_stl("cad/Asteria_Outside_Body.stl")
-
-        self.set_orientation((0.707, 0.707, 0, 0))
+        self.load_stl("cad/visualization.stl")
 
     def load_stl(self, file_path):
         stl_mesh = mesh.Mesh.from_file(file_path)
@@ -75,6 +73,10 @@ class VisualizationWindow(QWidget):
         renderer.AddActor(self.actor)
         renderer.ResetCamera()
         self.vtkWidget.GetRenderWindow().Render()
+
+        vertices = stl_mesh.vectors.reshape(-1, 3)
+        centroid = np.mean(vertices, axis=0)
+        self.centroid = centroid
 
     def set_orientation(self, quaternion: tuple[float, float, float, float]):
         roll, pitch, yaw = quaternion_to_euler(*quaternion)
@@ -184,14 +186,16 @@ class Asteria(QMainWindow):
         logger.info(f"Sent {command=} to ground.")
 
     def update_telemetry(self, args: tuple[bytes]):
-        # Update the telemetry labels.
+        # Deserialize the telemetry.
         telemetry = args[0]
-        self.orientation = (fixed_bytes_to_float(telemetry[0:4], 0.0, 1.00),
-                            fixed_bytes_to_float(telemetry[4:8], 0.0, 1.00),
-                            fixed_bytes_to_float(telemetry[8:12], 0.0, 1.00),
-                            fixed_bytes_to_float(telemetry[12:16], 0.0, 1.00))
+        self.orientation = (fixed_bytes_to_float(telemetry[0:4], 0.0, 1.0),
+                            fixed_bytes_to_float(telemetry[4:8], 0.0, 1.0),
+                            fixed_bytes_to_float(telemetry[8:12], 0.0, 1.0),
+                            fixed_bytes_to_float(telemetry[12:16], 0.0, 1.0))
         self.proximity = fixed_bytes_to_float(telemetry[16:20], 0.0, 1000.0)
-        self.temperature = fixed_bytes_to_float(telemetry[20:24], -100, 100)
+        self.temperature = fixed_bytes_to_float(telemetry[20:24], -100.0, 100.0)
+
+        # Update the telemetry labels.
         self.proximity *= 0.0328084
         self.temperature = self.temperature * 9 / 5 + 32
         self.orientation_label.setText(
@@ -203,7 +207,7 @@ class Asteria(QMainWindow):
 
         # Update the visualizer.
         if hasattr(self, "visualization_window"):
-            self.visualization_window.set_orientation((self.orientation, ))
+            self.visualization_window.set_orientation(self.orientation)
 
     def run(self):
         self.show()
@@ -221,4 +225,4 @@ class TelemetryThread(QThread):
     def run(self):
         while True:
             telemetry, _ = self._socket.recvfrom(4096)
-            self.update_telemetry.emit((telemetry, ))
+            self.update_telemetry.emit((None, ))
