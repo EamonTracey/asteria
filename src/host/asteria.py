@@ -113,12 +113,14 @@ class Asteria(QMainWindow):
                             fixed_bytes_to_float(telemetry[12:16], 0, 1.01))
         self.proximity = fixed_bytes_to_float(telemetry[16:20], 0, 1000.01)
         self.temperature = fixed_bytes_to_float(telemetry[20:24], -100, 100)
+        self.proximity *= 0.0328084
+        self.temperature = (self.temperature - 32) * 5 / 9
         self.orientation_label.setText(
             "Orientation (q): ({:.3f}, {:.3f}, {:.3f}, {:.3f})".format(
                 *self.orientation))
         self.temperature_label.setText(
-            f"Temperature (°C): {self.temperature:.3f}")
-        self.proximity_label.setText(f"Proximity (cm): {self.proximity:.3f}")
+            f"Temperature (°F): {self.temperature:.3f}")
+        self.proximity_label.setText(f"Proximity (ft): {self.proximity:.3f}")
 
     def run(self):
         self.show()
