@@ -47,7 +47,7 @@ class StageComponent(Component):
                 if self._lidar_state.proximity >= self._critical_proximity:
                     if self._loop_state.time - self._state.zero_to_one_transition_time >= ZERO_TO_ONE_TRANSITION_TIME:
                         logger.info("Transitioning from stage 0 to stage 1")
-                        self.stage = 1
+                        self._state.stage = 1
                 else:
                     self._state.zero_to_one_transition_time = None
 
@@ -59,7 +59,7 @@ class StageComponent(Component):
                 if self._lidar_state.proximity <= self._critical_proximity:
                     if self._loop_state.time - self._state.one_to_two_transition_time >= ONE_TO_TWO_TRANSITION_TIME:
                         logger.info("Transitioning from stage 1 to stage 2")
-                        self.stage = 2
+                        self._state.stage = 2
                 else:
                     self._state.one_to_two_transition_time = None
 
