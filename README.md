@@ -30,6 +30,8 @@ Commands:
   air     Run Asteria flight software.
   ground  Run Asteria ground software.
   host    Run Asteria host software.
+```
+```bash
 > ./run.sh air --help
 Usage: asteria.py air [OPTIONS]
 
@@ -43,6 +45,8 @@ Options:
   -p, --proximity FLOAT  The proximity from the ground at which flight
                          'begins' (ft).  [default: 50]
   --help                 Show this message and exit.
+```
+```bash
 > ./run.sh ground --help
 Usage: asteria.py ground [OPTIONS] HOST
 
@@ -56,6 +60,8 @@ Options:
   --host_port INTEGER  The UDP port on which the host receives telemetry.
                        [default: 9340]
   --help               Show this message and exit.
+```
+```bash
 > ./run.sh host --help
 Usage: asteria.py host [OPTIONS] GROUND
 
