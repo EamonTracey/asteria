@@ -5,6 +5,24 @@ from PIL import Image
 import os
 import numpy as np
 import re
+import math
+
+
+def quaternion_to_euler(w, x, y, z):
+    magnitude = math.sqrt(w**2 + x**2 + y**2 + z**2)
+    w, x, y, z = w / magnitude, x / magnitude, y / magnitude, z / magnitude
+    sin_pitch = 2.0 * (w * y - z * x)
+
+    if abs(sin_pitch) >= 1:
+        pitch = math.copysign(math.pi / 2, sin_pitch)
+        roll = 0
+        yaw = math.atan2(2 * (w * z + x * y), 1 - 2 * (y**2 + z**2))
+    else:
+        pitch = math.asin(sin_pitch)
+        roll = math.atan2(2.0 * (w * x + y * z), 1.0 - 2.0 * (x**2 + y**2))
+        yaw = math.atan2(2.0 * (w * z + x * y), 1.0 - 2.0 * (y**2 + z**2))
+
+    return math.degrees(roll), math.degrees(pitch), math.degrees(yaw)
 
 
 def smooth_data(data, window_size=10):
@@ -25,7 +43,30 @@ def plot_quaternion(data):
     plt.plot(time, z, label="z", linewidth=2)
     plt.title("IMU Fusion Quaternions (Orientation)")
     plt.xlabel("Time (s)")
-    plt.ylabel("Value")
+    plt.ylabel("Orientation (q)")
+    plt.legend()
+    plt.grid(True)
+
+
+def plot_euler(data):
+    time = data["Time"]
+    qw = smooth_data(data["Quaternion_W_BNO085"])
+    qx = smooth_data(data["Quaternion_X_BNO085"])
+    qy = smooth_data(data["Quaternion_Y_BNO085"])
+    qz = smooth_data(data["Quaternion_Z_BNO085"])
+    
+    eulers = [quaternion_to_euler(w, x, y, z) for (w, x, y, z) in zip(qw, qx, qy, qz)]
+    rolls = [euler[0] for euler in eulers]
+    pitches = [euler[1] for euler in eulers]
+    yaws = [euler[2] for euler in eulers]
+
+    plt.figure(figsize=(8, 5))
+    plt.plot(time, rolls, label="Roll", linewidth=2)
+    plt.plot(time, pitches, label="Pitch", linewidth=2)
+    plt.plot(time, yaws, label="Yaw", linewidth=2)
+    plt.title("IMU Fusion Euler Angles (Orientation)")
+    plt.xlabel("Time (s)")
+    plt.ylabel("Orientation (degrees)")
     plt.legend()
     plt.grid(True)
 
@@ -124,6 +165,11 @@ def main():
     with PdfPages(pdf_filename) as pdf:
         # Plot orientation.
         plot_quaternion(data)
+        pdf.savefig()
+        plt.close()
+
+        # Plot orientation.
+        plot_euler(data)
         pdf.savefig()
         plt.close()
 
