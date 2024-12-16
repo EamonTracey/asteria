@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import logging
+import time
 
 import microcontroller
 import pwmio
@@ -13,19 +14,25 @@ from air.stage import StageState
 BODY_SERVO_FREQUENCY = 333
 BODY_SERVO_MINIMUM_PULSE_WIDTH = 0.0005
 BODY_SERVO_MAXIMUM_PULSE_WIDTH = 0.0028
+BODY_MINIMUM_POSITION = int(BODY_SERVO_MINIMUM_PULSE_WIDTH * BODY_SERVO_FREQUENCY * 2**16)
+BODY_CENTER_POSITION = int((BODY_SERVO_MINIMUM_PULSE_WIDTH + BODY_SERVO_MAXIMUM_PULSE_WIDTH) / 2 * BODY_SERVO_FREQUENCY * 2**16)
+BODY_MAXIMUM_POSITION = int(BODY_SERVO_MAXIMUM_PULSE_WIDTH * BODY_SERVO_FREQUENCY * 2**16)
 
 # SG51R servo motor specifications (benchtop tested).
 LEG_SERVO_FREQUENCY = 50
 LEG_SERVO_MINIMUM_PULSE_WIDTH = 0.00075
 LEG_SERVO_MAXIMUM_PULSE_WIDTH = 0.0024
+LEG_MINIMUM_POSITION = int(LEG_SERVO_MINIMUM_PULSE_WIDTH * LEG_SERVO_FREQUENCY * 2**16)
+LEG_CENTER_POSITION = int((LEG_SERVO_MINIMUM_PULSE_WIDTH + LEG_SERVO_MAXIMUM_PULSE_WIDTH) / 2 * LEG_SERVO_FREQUENCY * 2**16)
+LEG_MAXIMUM_POSITION = int(LEG_SERVO_MAXIMUM_PULSE_WIDTH * LEG_SERVO_FREQUENCY * 2**16)
 
 logger = logging.getLogger(__name__)
 
 
 @dataclass
 class ControlState:
-    body_duty_cycle: int = 0
-    leg_duty_cycle: int = 90
+    body_duty_cycle: int = BODY_MINIMUM_POSITION
+    leg_duty_cycle: int = LEG_CENTER_POSITION
 
 
 class ControlComponent(Component):
@@ -55,7 +62,9 @@ class ControlComponent(Component):
             f"{LEG_SERVO_FREQUENCY=} {LEG_SERVO_MINIMUM_PULSE_WIDTH=} {LEG_SERVO_MAXIMUM_PULSE_WIDTH=}"
         )
         logger.info(f"{self._body_pwm=}")
+        logger.info(f"self._body_duty_cycle=")
         logger.info(f"{self._leg_pwm=}")
+        logger.info(f"self._leg_duty_cycle=")
 
     @property
     def state(self):
@@ -63,33 +72,29 @@ class ControlComponent(Component):
 
     def dispatch(self):
         stage = self._stage_state.stage
+        command = self._air_rfm95w_state.command
 
         # Perform body rotation.
         if stage == 0 or stage == 1:
-            command = self._air_rfm95w_state.command
             if command == 0:
                 # Minimum position.
-                self._state.body_duty_cycle = int(
-                    BODY_SERVO_MINIMUM_PULSE_WIDTH * BODY_SERVO_FREQUENCY *
-                    2**16)
+                self._state.body_duty_cycle = BODY_MINIMUM_POSITION
             elif command == 1:
                 # Center position.
-                self._state.body_duty_cycle = int(
-                    ((BODY_SERVO_MINIMUM_PULSE_WIDTH +
-                      BODY_SERVO_MAXIMUM_PULSE_WIDTH) / 2) *
-                    BODY_SERVO_FREQUENCY * 2**16)
+                self._state.body_duty_cycle = BODY_CENTER_POSITION
             elif command == 2:
                 # Maximum position.
-                self._state.body_duty_cycle = int(
-                    BODY_SERVO_MAXIMUM_PULSE_WIDTH * BODY_SERVO_FREQUENCY *
-                    2**16)
+                self._state.body_duty_cycle = BODY_MAXIMUM_POSITION
             else:
                 logger.info(f"Unknown command received: {command}")
 
         # Perform leg deployment.
         if self._stage_state.stage == 2:
-            # TODO: which way is which?
-            ...
+            # TODO: which direction?
+            if command == 0:
+                self._state.leg_duty_cycle = LEG_MINIMUM_POSITION
+            else:
+                self._state.leg_duty_cycle = LEG_MAXIMUM_POSITION
 
         # Set the duty cycles of the PWM signals.
         self._body_pwm.duty_cycle = self._state.body_duty_cycle
