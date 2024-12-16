@@ -144,7 +144,7 @@ def main():
         d["Keywords"] = "Sensor Data, Quaternion, LIDAR, Temperature, Images"
         d["CreationDate"] = pd.Timestamp.now()
 
-    print(f"All plots and images have been saved to "{pdf_filename}".")
+    print(f"All plots and images have been saved to \"{pdf_filename}\".")
 
 if __name__ == "__main__":
     main()
