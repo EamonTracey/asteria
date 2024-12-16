@@ -54,8 +54,11 @@ def plot_euler(data):
     qx = smooth_data(data["Quaternion_X_BNO085"])
     qy = smooth_data(data["Quaternion_Y_BNO085"])
     qz = smooth_data(data["Quaternion_Z_BNO085"])
-    
-    eulers = [quaternion_to_euler(w, x, y, z) for (w, x, y, z) in zip(qw, qx, qy, qz)]
+
+    eulers = [
+        quaternion_to_euler(w, x, y, z)
+        for (w, x, y, z) in zip(qw, qx, qy, qz)
+    ]
     rolls = [euler[0] for euler in eulers]
     pitches = [euler[1] for euler in eulers]
     yaws = [euler[2] for euler in eulers]
