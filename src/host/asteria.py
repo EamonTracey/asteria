@@ -226,4 +226,4 @@ class TelemetryThread(QThread):
     def run(self):
         while True:
             telemetry, _ = self._socket.recvfrom(4096)
-            self.update_telemetry.emit((None, ))
+            self.update_telemetry.emit((telemetry, ))
