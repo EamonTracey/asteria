@@ -4,9 +4,11 @@ from matplotlib.backends.backend_pdf import PdfPages
 from PIL import Image
 import os
 import numpy as np
+import re
+
 
 def smooth_data(data, window_size=10):
-    return np.convolve(data, np.ones(window_size)/window_size, mode="same")
+    return np.convolve(data, np.ones(window_size) / window_size, mode="same")
 
 
 def plot_quaternion(data):
@@ -27,6 +29,7 @@ def plot_quaternion(data):
     plt.legend()
     plt.grid(True)
 
+
 def plot_lidar(data):
     time = data["Time"]
     proximity = smooth_data(data["Proximity_Lidar"] * 0.0328084)
@@ -45,11 +48,12 @@ def plot_lidar(data):
     plt.figure(figsize=(8, 5))
     plt.plot(time, proximity, color="green", linewidth=2, label="Proximity")
 
-    plt.scatter(
-        [time[i] for i in stage_change_indices],
-        stage_values,
-        color="red", marker="o", s=100, label="Stage Change"
-    )
+    plt.scatter([time[i] for i in stage_change_indices],
+                stage_values,
+                color="red",
+                marker="o",
+                s=100,
+                label="Stage Change")
 
     plt.title("LiDaR Proximity w/ Stage Markers")
     plt.xlabel("Time (s)")
@@ -60,7 +64,7 @@ def plot_lidar(data):
 
 def plot_temperature(data):
     time = data["Time"]
-    temperature = smooth_data(data["Temperature_MCP9808"] * (9/5) + 32)
+    temperature = smooth_data(data["Temperature_MCP9808"] * (9 / 5) + 32)
 
     plt.figure(figsize=(8, 5))
     plt.plot(time, temperature, color="orange", linewidth=2)
@@ -69,28 +73,33 @@ def plot_temperature(data):
     plt.ylabel("Temperature (°F)")
     plt.ylim(70, 90)
     plt.grid(True)
-    
+
 
 def add_images_to_pdf(image_folder, pdf):
-    for filename in sorted(os.listdir(image_folder)):
-        if filename.lower().endswith((".jpg", ".jpeg", ".png")):
-            img_path = os.path.join(image_folder, filename)
-            image = Image.open(img_path)
+    images = os.listdir(image_folder)
+    images = [
+        image for image in images if image.lower().endswith((".jpg", ".jpeg"))
+    ]
+    images = sorted(images, key=lambda q: int(re.search(r"\d+", q).group()))
+    for filename in images:
+        img_path = os.path.join(image_folder, filename)
+        image = Image.open(img_path)
 
-            plt.figure(figsize=(8, 5))
-            plt.imshow(image)
-            plt.axis("off")
-            plt.title(f"Image: {filename}")
-            pdf.savefig()
-            plt.close()
-            print(f"Added {filename} to the PDF.")
+        plt.figure(figsize=(8, 5))
+        plt.imshow(image)
+        plt.axis("off")
+        plt.title(f"Image: {filename}")
+        pdf.savefig()
+        plt.close()
+        print(f"Added {filename} to the PDF.")
+
 
 def plot_acceleration(data):
     time = data["Time"]
     ax = data["Acceleration_X_BNO085"]
     ay = data["Acceleration_Y_BNO085"]
     az = data["Acceleration_Z_BNO085"]
-    
+
     times = np.array(time)
     aax = smooth_data(np.gradient(np.array(ax), times))
     aay = smooth_data(np.gradient(np.array(ay), times))
@@ -111,7 +120,7 @@ def main():
     data = pd.read_csv("demo/demo.csv")
     print(f"Loaded data with {len(data)} records and {data.shape[1]} columns.")
 
-    pdf_filename = os.path.join(base_path, "demo.pdf")
+    pdf_filename = "demo.pdf"
     with PdfPages(pdf_filename) as pdf:
         # Plot orientation.
         plot_quaternion(data)
@@ -145,6 +154,7 @@ def main():
         d["CreationDate"] = pd.Timestamp.now()
 
     print(f"All plots and images have been saved to \"{pdf_filename}\".")
+
 
 if __name__ == "__main__":
     main()
